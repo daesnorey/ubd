@@ -1,0 +1,8 @@
+<header class="main">
+  <h1 class="title fixed">{{title}}</h1>
+  <div class="menu">
+    <ng-container *ngFor="let menu of menuList">
+      <a routerLink="/{{menu.link}}" class="menu">{{menu.name}}</a>      
+    </ng-container>
+  </div>
+</header>

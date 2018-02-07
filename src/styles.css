@@ -1,1 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
+* {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+body, html {
+    margin: 0;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: 100px 100px;
+    grid-template-areas: 
+    "empty routerOulet routerOulet routerOulet routerOulet routerOulet"
+    "header routerOulet routerOulet routerOulet routerOulet routerOulet";
+}
+
+.wrapper::before {
+    content: "";
+    grid-area: empty;
+}
+
+.wrapper > .headerModule {
+    grid-area: headerModule;
+}
+
+.wrapper > .header {
+    grid-area: header;
+}
+
+.wrapper > .routerOulet {
+    grid-area: routerOulet;
+}
+
+.fixed {
+    position: fixed;
+    top: 0;
+    margin: 0;
+}
+
+h1 {
+    font-size: 100%;
+    margin: auto;
+}
