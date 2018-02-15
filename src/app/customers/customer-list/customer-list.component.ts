@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Menu } from '../../components/header/class/menu';
+import { MenuService} from '../../services/menu.service';
 
 @Component({
   selector: 'app-customer-list',
@@ -7,9 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CustomerListComponent implements OnInit {
 
-  constructor() { }
+  constructor(public menuService: MenuService) { }
 
   ngOnInit() {
+    let menu: Menu = {
+      link: 'd',
+      name: 'no'
+    };
+    this.menuService.addModuleMenu(menu);
+  }
+
+  ngOnDestroy() {
+    this.menuService.setModuleMenu(null);
   }
 
 }

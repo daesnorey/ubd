@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Menu } from './class/menu';
+import { MenuService } from '../../services/menu.service';
 
 @Component({
   selector: 'app-header',
@@ -10,9 +11,6 @@ export class HeaderComponent implements OnInit {
 
   @Input()
   title: string;
-
-  @Input()
-  type: number;
 
   menuList: Menu[] = [
     {
@@ -39,10 +37,9 @@ export class HeaderComponent implements OnInit {
 
   moduleMenu: Menu[];
 
-  constructor() { }
+  constructor(public menuService: MenuService) { }
 
-  ngOnInit() {
-    console.log(this.type);
+  ngOnInit() {    
   }
 
 }

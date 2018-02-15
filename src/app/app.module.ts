@@ -18,7 +18,7 @@ import { HeaderComponent } from './components/header/header.component';
     FormsModule,
     HttpModule,
     AppRoutingModule,
-    SharedModule
+    SharedModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
