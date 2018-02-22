@@ -39,7 +39,8 @@ export class HeaderComponent implements OnInit {
 
   constructor(public menuService: MenuService) { }
 
-  ngOnInit() {    
+  ngOnInit() {
+    
   }
 
 }
