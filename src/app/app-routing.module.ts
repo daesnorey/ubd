@@ -1,23 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AppComponent } from './app.component';
 
 const routes: Routes = [
   {
-    path: 'customers',
-    loadChildren: 'app/customers/customers.module#CustomersModule'
-  },
-  {
-    path: 'inventory',
-    loadChildren: 'app/inventory/inventory.module#InventoryModule'
-  },
-  {
-    path: 'purchases',
-    loadChildren: 'app/purchases/purchases.module#PurchasesModule'
-  },
-  {
-    path: 'sells',
-    loadChildren: 'app/sells/sells.module#SellsModule'
-  },
+    path: '/',
+    component: AppComponent,
+  }
 ];
 
 @NgModule({
