@@ -8,6 +8,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { MenuService } from './services/menu.service';
 import { ThirdPartyComponent } from './components/third-party/third-party.component';
 import { ClientComponent } from './components/third-party/client/client.component';
+import { EmployeeComponent } from './components/third-party/employee/employee.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { ClientComponent } from './components/third-party/client/client.componen
     AppComponent,
     HeaderComponent,
     ThirdPartyComponent,
-    ClientComponent
+    ClientComponent,
+    EmployeeComponent
   ],
   imports: [
     BrowserModule,
