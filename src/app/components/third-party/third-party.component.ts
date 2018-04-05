@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { ThirdParty } from './class/third-party';
+import { ThirdPartyService } from './services/third-party.service';
 
 @Component({
   selector: 'app-third-party',
   templateUrl: './third-party.component.html',
-  styleUrls: ['./third-party.component.css']
+  styleUrls: ['./third-party.component.css'],
+  providers: [ThirdPartyService]
 })
 export class ThirdPartyComponent implements OnInit {
 
   public third_party: ThirdParty;
   public editable = false;
 
-  constructor() {
+  constructor(private thirdPartyService: ThirdPartyService) {
     this.third_party = new ThirdParty();
   }
 
