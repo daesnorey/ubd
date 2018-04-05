@@ -6,12 +6,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { MenuService } from './services/menu.service';
+import { ThirdPartyComponent } from './components/third-party/third-party.component';
+import { ClientComponent } from './components/third-party/client/client.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent
+    HeaderComponent,
+    ThirdPartyComponent,
+    ClientComponent
   ],
   imports: [
     BrowserModule,

@@ -13,7 +13,7 @@ export class MenuService {
   }
 
   public addModuleMenu(menu: Menu): void {
-    if(this.moduleMenu === undefined || this.moduleMenu === null) {
+    if (this.moduleMenu === undefined || this.moduleMenu === null) {
       this.cleanModuleMenu();
     }
 

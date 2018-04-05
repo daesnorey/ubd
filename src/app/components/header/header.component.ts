@@ -14,25 +14,9 @@ export class HeaderComponent implements OnInit {
 
   menuList: Menu[] = [
     {
-      name: "Customers",
-      link: "/customers"
-    },
-    {
-      name: "Inventory",
-      link:"/inventory"
-    },
-    {
-      name: "purchases",
-      link:"/purchases"
-    },
-    {
-      name: "sells",
-      link:"/sells"
-    },
-    {
-      name: "home",
-      link: ""
-    },
+      name: 'Terceros',
+      link: '/third-party'
+    }
   ];
 
   moduleMenu: Menu[];
@@ -40,7 +24,7 @@ export class HeaderComponent implements OnInit {
   constructor(public menuService: MenuService) { }
 
   ngOnInit() {
-    
+
   }
 
 }

@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
+
+import { ThirdPartyComponent } from './components/third-party/third-party.component';
 
 const routes: Routes = [
   {
-    path: '',
-    component: AppComponent,
+    path: 'third-party',
+    component: ThirdPartyComponent
   }
 ];
 
