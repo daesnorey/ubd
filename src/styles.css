@@ -11,8 +11,8 @@ body, html {
     grid-template-columns: repeat(6, 1fr);
     grid-template-rows: 100px 100px;
     grid-template-areas: 
-    "empty routerOulet routerOulet routerOulet routerOulet routerOulet"
-    "header routerOulet routerOulet routerOulet routerOulet routerOulet";
+    "header header header header header header "
+    "empty routerOulet routerOulet routerOulet routerOulet routerOulet";
 }
 
 .wrapper::before {
