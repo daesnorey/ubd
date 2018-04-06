@@ -12,6 +12,7 @@ export class ThirdPartyComponent implements OnInit {
 
   public third_party: ThirdParty;
   public editable = false;
+  private page: number;
 
   constructor(private thirdPartyService: ThirdPartyService) {
     this.third_party = new ThirdParty();
@@ -23,6 +24,26 @@ export class ThirdPartyComponent implements OnInit {
 
   public set_type(type: number) {
     this.third_party.third_type = type;
+  }
+
+  public look_up(query?: string): void {
+    if (!!query) {
+      const advance = /[dna]{1}\s{0,3}:{1}/i;
+
+      if (advance.test(query)) {
+        const options = advance.exec(query);
+        this.thirdPartyService.advance_search(query, options);
+      } else {
+        this.thirdPartyService.basic_search(query);
+      }
+    } else {
+      this.thirdPartyService.search_by_page(this.page);
+    }
+  }
+
+  public reset_search(): void {
+    this.page = 1;
+    this.look_up();
   }
 
 }
