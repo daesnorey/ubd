@@ -14,6 +14,9 @@ export class ThirdPartyComponent implements OnInit {
   public editable = false;
   private page: number;
 
+  public third_partys: ThirdParty[];
+  public key;
+
   constructor(private thirdPartyService: ThirdPartyService) {
     this.third_party = new ThirdParty();
   }
@@ -44,6 +47,17 @@ export class ThirdPartyComponent implements OnInit {
   public reset_search(): void {
     this.page = 1;
     this.look_up();
+  }
+
+  public find(search: string) {
+    if (search === 'ALL') {
+      this.third_partys = this.thirdPartyService.get_third_party();
+    }
+    this.key = search;
+  }
+
+  public view(third: ThirdParty) {
+    this.third_party.third_type = third.third_type;
   }
 
 }
