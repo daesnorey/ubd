@@ -1,4 +1,4 @@
-<input #search (keyup)=look_up(search.value) placeholder="Busqueda... " id="search">
+  <input #search (keyup)=look_up(search.value) placeholder="Busqueda... " id="search">
 
 <table *ngIf="third_partys" class="thirdPartyTable">
   <thead>
@@ -8,19 +8,17 @@
       <th>NUMERO DOCUMENTO</th>
       <th>NOMBRES</th>
       <th>APELLIDOS</th>
-      <th>TIPO</th>
       <th>FECHA NACIMIENTO</th>
       <th>ESTADO CIVIL</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let third of third_partys" (click)="view(third)">
-      <td>{{third.id}}</td>
+      <th>{{third.id}}</th>
       <td>{{third.document_type}}</td>
       <td>{{third.document_number}}</td>
       <td>{{third.names}}</td>
       <td>{{third.surnames}}</td>
-      <td>{{third.third_type}}</td>
       <td>{{third.born_date | date:'yyyy-MM-dd'}}</td>
       <td>{{third.marita_status}}</td>
     </tr>
