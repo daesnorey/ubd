@@ -1,31 +1,56 @@
+<div class="thirdPartyDiv">
   <input #search (keyup)=look_up(search.value) placeholder="Busqueda... " id="search">
-
-<table *ngIf="third_partys" class="thirdPartyTable">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>TIPO DOCUMENTO</th>
-      <th>NUMERO DOCUMENTO</th>
-      <th>NOMBRES</th>
-      <th>APELLIDOS</th>
-      <th>FECHA NACIMIENTO</th>
-      <th>ESTADO CIVIL</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let third of third_partys" (click)="view(third)">
-      <th>{{third.id}}</th>
-      <td>{{third.document_type}}</td>
-      <td>{{third.document_number}}</td>
-      <td>{{third.names}}</td>
-      <td>{{third.surnames}}</td>
-      <td>{{third.born_date | date:'yyyy-MM-dd'}}</td>
-      <td>{{third.marita_status}}</td>
-    </tr>
-  </tbody>
-</table>
-<div *ngIf="third_party.third_type == 1">
-  <app-client></app-client>
+  <button (click)="view('')" id="addButton"> + </button>
+</div>
+<div *ngIf="third_partys" class="thirdPartyDiv">
+  <table class="thirdPartyTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>TIPO DOCUMENTO</th>
+        <th>NUMERO DOCUMENTO</th>
+        <th>NOMBRES</th>
+        <th>APELLIDOS</th>
+        <th>FECHA NACIMIENTO</th>
+        <th>ESTADO CIVIL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let third of third_partys" (click)="view(third.id)">
+        <th>{{third.id}}</th>
+        <td>{{third.document_type}}</td>
+        <td>{{third.document_number}}</td>
+        <td>{{third.names}}</td>
+        <td>{{third.surnames}}</td>
+        <td>{{third.born_date | date:'yyyy-MM-dd'}}</td>
+        <td>{{third.marita_status}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="thirdPartyDiv">
+  <fieldset>
+    <legend>Detalle</legend>
+    <p>
+      Tipo de documento: <input type="text" ng-model="third_party.document_type" />
+    </p>
+    <p>
+      Numero de documento: <input type="text" ng-model="third_party.document_number" />
+    </p>
+    <p>
+      Nombres: <input type="text" ng-model="third_party.names" />
+    </p>
+    <p>
+      Apellidos: <input type="text" ng-model="third_party.surnames" />
+    </p>
+    <p>
+      Fecha de nacimiento: <input type="text" ng-model="third_party.born_date" />
+    </p>
+    <p>
+      Estado civil: <input type="text" ng-model="third_party.marita_status" />
+    </p>
+  </fieldset>  
+  <button>Close</button>
 </div>
 <div *ngIf="third_party.third_type == 2">
   <app-employee></app-employee>
