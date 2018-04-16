@@ -57,8 +57,8 @@ export class ThirdPartyComponent implements OnInit {
     }
   }
 
-  public view(third: ThirdParty) {
-    this.third_party.third_type = third.third_type;
+  public view(id: number) {
+    this.third_party.id = id;
   }
 
 }
