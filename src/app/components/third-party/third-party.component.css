@@ -111,8 +111,6 @@ input#search:hover, input[type=text]:hover{
 fieldset {
     border: 1px solid #eaeaea;
     padding: 0.5em;
-    margin: 20px 0 35px;
-    width: 60%;
 }
 
 fieldset legend {
@@ -125,13 +123,13 @@ fieldset legend {
     margin-left: 10px;
 }
 
-h1, button{
+h1, button:not(.close){
     letter-spacing: 0.25em;
     text-transform: uppercase;
     font-weight: 300;
 }
 
-button {
+button:not(.close) {
     background-color: #373737;
     color: #ffffff;
     border-radius: 5px;
