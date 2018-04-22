@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ThirdParty } from './class/third-party';
 import { ThirdPartyService } from './services/third-party.service';
 import { Subscription } from 'rxjs/Subscription';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-third-party',
@@ -19,8 +20,10 @@ export class ThirdPartyComponent implements OnInit {
 
   public third_partys: ThirdParty[];
   public key;
+  closeResult: string;
 
-  constructor(private thirdPartyService: ThirdPartyService) {
+  constructor(private thirdPartyService: ThirdPartyService,
+    private modalService: NgbModal) {
     this.third_party = new ThirdParty();
   }
 
@@ -57,8 +60,9 @@ export class ThirdPartyComponent implements OnInit {
     }
   }
 
-  public view(id: number) {
-    this.third_party.id = id;
+  open_modal(content: any, selected_third: ThirdParty) {
+    this.modalService.open(content, { size: 'lg' });
+    this.third_party = selected_third;
   }
 
 }
