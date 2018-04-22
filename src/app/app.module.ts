@@ -10,6 +10,7 @@ import { MenuService } from './services/menu.service';
 import { ThirdPartyComponent } from './components/third-party/third-party.component';
 import { ClientComponent } from './components/third-party/client/client.component';
 import { EmployeeComponent } from './components/third-party/employee/employee.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { EmployeeComponent } from './components/third-party/employee/employee.co
     FormsModule,
     HttpModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgbModule.forRoot()
   ],
   providers: [MenuService, HttpClient],
   bootstrap: [AppComponent]
