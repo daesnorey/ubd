@@ -11,6 +11,7 @@ import { ThirdPartyComponent } from './components/third-party/third-party.compon
 import { ClientComponent } from './components/third-party/client/client.component';
 import { EmployeeComponent } from './components/third-party/employee/employee.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PurchaseComponent } from './components/purchase/purchase.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     HeaderComponent,
     ThirdPartyComponent,
     ClientComponent,
-    EmployeeComponent
+    EmployeeComponent,
+    PurchaseComponent
   ],
   imports: [
     BrowserModule,

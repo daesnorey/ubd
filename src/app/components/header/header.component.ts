@@ -16,6 +16,10 @@ export class HeaderComponent implements OnInit {
     {
       name: 'Terceros',
       link: '/third-party'
+    },
+    {
+      name: 'Compras',
+      link: '/purchase'
     }
   ];
 

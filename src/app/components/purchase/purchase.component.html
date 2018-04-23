@@ -1,0 +1,22 @@
+<div *ngIf="openPurchases">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>ID TERCERO</th>
+        <th>FECHA</th>
+        <th>VALOR NETO</th>
+        <th>VALOR TOTAL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let purchase of openPurchases | async">
+        <td>{{purchase.id}}</td>
+        <td>{{purchase.third_party_id}}</td>
+        <td>{{purchase.date | date:'yyyy-MM-dd'}}</td>
+        <td>{{purchase.sub_cost | currency:'COP':'symbol'}}</td>
+        <td>{{purchase.total_cost | currency:'COP':'symbol'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

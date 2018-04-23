@@ -1,3 +1,5 @@
+import { util } from '../../../class/util';
+
 export class ThirdParty {
     id: number;
     document_type: string;
@@ -26,17 +28,8 @@ export class ThirdParty {
         this.names = names;
         this.surnames = surnames;
         this.third_type = third_type;
-        this.born_date = this.get_date(born_date);
+        this.born_date = util.get_date(born_date);
         this.marita_status = marita_status;
         this.start_date = start_date;
-    }
-
-    private get_date(date: any) {
-        if (typeof date === 'string' || typeof date === 'number') {
-            const regDate = /^((?:19|20){1}[0-9]{2}){1}([0-9]{2}){1}([0-9]{2}){1}$/;
-            const result = regDate.exec(date.toString());
-            return new Date(parseInt(result[1], 10), parseInt(result[2], 10) - 1, parseInt(result[3], 10));
-        }
-        return new Date();
     }
 }
