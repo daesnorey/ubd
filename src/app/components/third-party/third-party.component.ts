@@ -4,6 +4,9 @@ import { ThirdPartyService } from './services/third-party.service';
 import { Subscription } from 'rxjs/Subscription';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
+import { Observable } from 'rxjs/observable';
+import { catchError, map, tap } from 'rxjs/operators';
+
 @Component({
   selector: 'app-third-party',
   templateUrl: './third-party.component.html',
@@ -15,6 +18,8 @@ export class ThirdPartyComponent implements OnInit {
   public third_party: ThirdParty;
   public editable = false;
   private page: number;
+
+  private marital_status: Observable<any[]>;
 
   private subscription: Subscription = null;
 
@@ -28,7 +33,6 @@ export class ThirdPartyComponent implements OnInit {
   }
 
   ngOnInit() {
-
   }
 
   public look_up(query?: string) {
@@ -63,6 +67,11 @@ export class ThirdPartyComponent implements OnInit {
   open_modal(content: any, selected_third: ThirdParty) {
     this.modalService.open(content, { size: 'lg' });
     this.third_party = selected_third;
+    this.marital_status = this.get_domain('ESTADO_CIVIL');
+  }
+
+  get_domain(table: string) {
+    return this.thirdPartyService.get_domain(table);
   }
 
 }

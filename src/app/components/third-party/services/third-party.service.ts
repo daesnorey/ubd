@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ThirdParty } from '../class/third-party';
 
+import { Observable } from 'rxjs/observable';
 import 'rxjs/add/operator/map';
 
-const WS_URL = '//localhost:2900/';
+const WS_URL = 'http://localhost:2900/';
 const METHOD = 'third-party';
 
 @Injectable()
@@ -55,6 +56,20 @@ export class ThirdPartyService {
           item.start_date
         );
       });
+    });
+  }
+
+  public get_domain(table: string): Observable<any[]> {
+    const apiUrl = `${WS_URL}domain?table=${table}`;
+    return this.http.get(apiUrl)
+    .map(res => {
+      if (res === null || res === undefined) {
+        return null;
+      }
+      const result = (res as any[]).map(item => {
+        return {id: item[0], name: item[1]};
+      });
+      return result;
     });
   }
 }

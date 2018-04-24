@@ -54,7 +54,12 @@
         Fecha de nacimiento: <input type="text" [(ngModel)]="third_party.born_date" />
       </p>
       <p>
-        Estado civil: <input type="text" [(ngModel)]="third_party.marita_status" />
+        Estado civil:
+        <select [(ngModel)]="third_party.marital_status">
+          <option *ngFor="let item of marital_status | async" value="{{item.id}}">
+            {{item.name}}
+          </option>
+        </select>
       </p>
     </fieldset>
   </div>

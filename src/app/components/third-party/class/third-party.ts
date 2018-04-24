@@ -8,7 +8,7 @@ export class ThirdParty {
     surnames: string;
     third_type: number;
     born_date: Date;
-    marita_status: string;
+    marital_status: string;
     start_date: any;
 
     public constructor(
@@ -19,7 +19,7 @@ export class ThirdParty {
         surnames?: string,
         third_type?: number,
         born_date?: number,
-        marita_status?: string,
+        marital_status?: string,
         start_date?: any
     ) {
         this.id = id;
@@ -29,7 +29,7 @@ export class ThirdParty {
         this.surnames = surnames;
         this.third_type = third_type;
         this.born_date = util.get_date(born_date);
-        this.marita_status = marita_status;
+        this.marital_status = marital_status;
         this.start_date = start_date;
     }
 }
