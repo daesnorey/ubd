@@ -1,4 +1,4 @@
-<div *ngIf="openPurchases">
+<div *ngIf="openPurchases" class="content">
   <table>
     <thead>
       <tr>
@@ -10,7 +10,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let purchase of openPurchases | async">
+      <tr *ngFor="let purchase of openPurchases | async" (click)="open_modal(detail,purchase)">
         <td>{{purchase.id}}</td>
         <td>{{purchase.third_party_id}}</td>
         <td>{{purchase.date | date:'yyyy-MM-dd'}}</td>
@@ -20,3 +20,105 @@
     </tbody>
   </table>
 </div>
+
+<ng-template #detail let-c="close" let-d="dismiss" class="modal fade">
+    <div class="modal-header">
+      <h4 class="modal-title">Detalle de compra</h4>
+      <button type="button" class="close" aria-label="Close" (click)="d()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="purchase_details; else purchaseEmpty" >
+        <table class="purchase-details-title">
+          <thead>
+            <tr>
+              <th>PRODUCTO</th>
+              <th>PRESENTACION</th>
+              <th>CANTIDAD</th>
+              <th>VALOR UNITARIO</th>
+              <th>VALOR TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detail of purchase_details | async" (click)="add(editDetail,detail)">
+              <td>
+                <select [(ngModel)]="detail.product_id" disabled="disabled">
+                  <option *ngFor="let item of products | async" [ngValue]="item.id">
+                    {{item.name}}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="detail.presentation_id" disabled="disabled">
+                  <option *ngFor="let item of presentations | async" [ngValue]="item.id">
+                    {{item.name}}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <span>{{detail.amount}}</span>
+              </td>
+              <td>
+                <span>{{detail.unitary_cost | currency:'$'}}</span>
+              </td>
+              <td>
+                <span>{{detail.total_cost | currency:'$'}}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #purchaseEmpty>Aún no hay detalles</ng-template>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="add(editDetail,{})">Agregar</button>
+      <button type="button" class="btn btn-outline-dark" (click)="c()">Close</button>
+    </div>
+  </ng-template>
+
+  <ng-template #editDetail let-c="close" let-d="dismiss">
+      <div class="modal-header">
+        <h4 class="modal-title">Modifica</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="purchase_detail; else detailEmpty" >
+          <label>
+            Producto
+            <select [(ngModel)]="purchase_detail.product_id">
+              <option *ngFor="let item of products | async" [ngValue]="item.id">
+                {{item.name}}
+              </option>
+            </select>
+          </label>
+          <label>
+            Presentación
+            <select [(ngModel)]="purchase_detail.presentation_id">
+              <option *ngFor="let item of presentations | async" [ngValue]="item.id">
+                {{item.name}}
+              </option>
+            </select>
+          </label>
+          <label>
+            Cantidad
+            <input type="number" [(ngModel)]="purchase_detail.amount">
+          </label>
+          <label>
+            Valor unitario
+            <input type="number" [(ngModel)]="purchase_detail.unitary_cost">
+          </label>
+          <label>
+            Valor total
+            <input type="number" [(ngModel)]="purchase_detail.total_cost" readonly="readonly" value="{{purchase_detail.amount*purchase_detail.unitary_cost}}">
+          </label>
+        </div>
+        <ng-template #detailEmpty>Error no deberia estar viendo esta pantalla</ng-template>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="saveDetail()">Guardar</button>
+        <button type="button" class="btn btn-outline-dark" (click)="c()">Close</button>
+      </div>
+    </ng-template>
