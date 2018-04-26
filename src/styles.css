@@ -1,3 +1,5 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
 * {
     font-family: 'Ubuntu', sans-serif;
 }
@@ -172,13 +174,13 @@ fieldset legend {
     margin-left: 10px;
 }
 
-h1, button:not(.close){
+h1, button.button {
     letter-spacing: 0.25em;
     text-transform: uppercase;
     font-weight: 300;
 }
 
-button:not(.close) {
+button.button {
     background-color: #373737;
     color: #ffffff;
     border-radius: 5px;
@@ -199,7 +201,7 @@ input[type=text] {
     padding: 10px 15px;
 }
 
-button#addButton {
+button.addButton {
     height: 40px;
     width: 40px;
     float: right;
@@ -207,8 +209,8 @@ button#addButton {
     padding: 0px;
 }
 
-button#addButton:hover {
-    background-color: #505050;
+button.addButton:hover {
+    background-color: #455a64;
     box-shadow: rgba(28,56,72,0.1) 0px 8px 8px;
 }
 
@@ -217,4 +219,17 @@ select[disabled] {
     outline: none;
     color: rgba(0,0,0,0);
     text-shadow: 0 0 0 #000;
+}
+
+[readonly] {
+    cursor: default;
+    background: #ecf0f1;
+}
+
+.mat-datepicker-popup, .cdk-overlay-container {
+    z-index: 1060!important;
+}
+
+snack-bar-container.snack-bar-custom {
+    background: #1c313a;
 }

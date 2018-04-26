@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -12,6 +13,18 @@ import { ClientComponent } from './components/third-party/client/client.componen
 import { EmployeeComponent } from './components/third-party/employee/employee.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PurchaseComponent } from './components/purchase/purchase.component';
+import {
+  MatInputModule,
+  MatSelectModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatButtonModule,
+  MatListModule,
+  MatDividerModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatSnackBarModule
+} from '@angular/material';
 
 
 @NgModule({
@@ -29,6 +42,17 @@ import { PurchaseComponent } from './components/purchase/purchase.component';
     HttpModule,
     HttpClientModule,
     AppRoutingModule,
+    NoopAnimationsModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatListModule,
+    MatDividerModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
     NgbModule.forRoot()
   ],
   providers: [MenuService, HttpClient],

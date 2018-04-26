@@ -72,4 +72,9 @@ export class ThirdPartyService {
       return result;
     });
   }
+
+  public get_third(id: number) {
+    const apiUrl = `${WS_URL}${METHOD}?third_id=${id}`;
+    return this.http.get<ThirdParty>(apiUrl);
+  }
 }

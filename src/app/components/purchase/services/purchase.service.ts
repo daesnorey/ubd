@@ -28,7 +28,7 @@ export class PurchaseService {
   constructor(private http: HttpClient) { }
 
   public get_open_purchases(): Observable<Purchase[]> {
-    const apiUrl = `${WS_URL}${METHOD}/open`;
+    const apiUrl = `${WS_URL}${METHOD}/open?timestamp=${Date.now()}`;
     return this.http.get(apiUrl)
       .map(res => {
         if (res === null || res === undefined) {
@@ -49,7 +49,7 @@ export class PurchaseService {
   }
 
   public get_details(id: number): Observable<PurchaseDetail[]> {
-    const apiUrl = `${WS_URL}${METHOD}/detail?purchase_id=${id}`;
+    const apiUrl = `${WS_URL}${METHOD}/detail?purchase_id=${id}&timestamp=${Date.now()}`;
     return this.http.get(apiUrl)
       .map(res => {
         if (res === null || res === undefined) {
@@ -71,7 +71,7 @@ export class PurchaseService {
   }
 
   public get_domain(table: string): Observable<any[]> {
-    const apiUrl = `${WS_URL}domain?table=${table}`;
+    const apiUrl = `${WS_URL}domain?table=${table}&timestamp=${Date.now()}`;
     return this.http.get(apiUrl)
     .map(res => {
       if (res === null || res === undefined) {
@@ -85,9 +85,19 @@ export class PurchaseService {
   }
 
   public save_detail(purchase_detail: PurchaseDetail) {
-    const apiUrl = `${WS_URL}${METHOD}/detail`;
-    console.log(purchase_detail);
+    const apiUrl = `${WS_URL}${METHOD}/detail?timestamp=${Date.now()}`;
     return this.http.post<any>(apiUrl, purchase_detail);
+  }
+
+  public save_purchase(purchase: Purchase) {
+    const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
+    return this.http.post<any>(apiUrl, purchase);
+  }
+
+  public close_purchase(purchase: Purchase) {
+    const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
+    purchase.state = 1;
+    return this.http.post<any>(apiUrl, purchase);
   }
 
 }
