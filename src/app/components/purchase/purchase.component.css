@@ -1,0 +1,100 @@
+label.detail-label {
+    width: 100%;
+    display: block;
+}
+
+label.detail-label > select,
+label.detail-label > input {
+    display: block;
+    width: 100%;
+    padding: 0.3em 0.5em;
+}
+
+div.third-results {
+    position: absolute;
+    background: #ffffff;
+    top: 5em;
+    display: block;
+    width: 100%;
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 15px;
+    padding-left: 15px;
+    box-shadow: 1px 0px 3px;
+}
+
+div.third-results .item-result {
+    cursor: pointer;
+}
+
+div.third-results .item-result:hover {
+    background: #ecf0f1;
+}
+
+div.third-results > span > span {
+    border-right: 1px solid #ecf0f1;
+}
+
+div.search {
+    display: block;
+    position: relative;
+    width: 100%;
+}
+
+div.search > input {
+    display: block;
+    position: relative;
+    float: none;
+}
+
+div.search > span {
+    display: block;
+    position: absolute;
+    top: 0.5em;
+    left: 1.5em;
+    background: #ecf0f1;
+}
+
+div.content {
+    display: block;
+}
+
+
+.add-main-button {
+    position: fixed;
+    right: 5%;
+    bottom: 5%;
+    background: #455a64;
+    color: #ffffff;
+}
+
+.add-button {
+    position: relative;
+    right: 5%;
+    bottom: 5%;
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+    background: #455a64;
+    color: #ffffff;
+}
+
+.add-main-button:hover {
+    background: #1c313a;
+}
+
+div.purchase-header-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: 
+    "names . date";
+}
+
+div.purchase-header-grid > span.purchase-header-names {
+    grid-area: names;
+}
+
+div.purchase-header-grid > span.purchase-header-date {
+    grid-area: date;
+}
