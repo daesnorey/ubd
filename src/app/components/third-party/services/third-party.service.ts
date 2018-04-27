@@ -72,4 +72,10 @@ export class ThirdPartyService {
       return result;
     });
   }
+
+  public save(third: ThirdParty): Observable<ThirdParty>{
+    const apiUrl = `${WS_URL}${METHOD}`;
+    return this.http.post<ThirdParty>(apiUrl, third, this.httpOptions);
+
+  }
 }

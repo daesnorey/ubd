@@ -64,7 +64,7 @@ export class ThirdPartyComponent implements OnInit {
     }
   }
 
-  open_modal(content: any, selected_third: ThirdParty) {
+  open_modal(content: any, selected_third?: ThirdParty) {
     this.modalService.open(content, { size: 'lg' });
     this.third_party = selected_third;
     this.marital_status = this.get_domain('ESTADO_CIVIL');
@@ -73,5 +73,11 @@ export class ThirdPartyComponent implements OnInit {
   get_domain(table: string) {
     return this.thirdPartyService.get_domain(table);
   }
+
+  save(){
+    this.thirdPartyService.save(this.third_party)
+      .subscribe();
+  }
+  
 
 }
