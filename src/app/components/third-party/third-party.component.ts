@@ -74,10 +74,9 @@ export class ThirdPartyComponent implements OnInit {
     return this.thirdPartyService.get_domain(table);
   }
 
-  save(){
+  save() {
     this.thirdPartyService.save(this.third_party)
       .subscribe();
   }
-  
 
 }
