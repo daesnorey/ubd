@@ -70,20 +70,6 @@ export class PurchaseService {
       });
   }
 
-  public get_domain(table: string): Observable<any[]> {
-    const apiUrl = `${WS_URL}domain?table=${table}&timestamp=${Date.now()}`;
-    return this.http.get(apiUrl)
-    .map(res => {
-      if (res === null || res === undefined) {
-        return null;
-      }
-      const result = (res as any[]).map(item => {
-        return {id: btoa(item[0]), name: item[1]};
-      });
-      return result;
-    });
-  }
-
   public save_detail(purchase_detail: PurchaseDetail) {
     const apiUrl = `${WS_URL}${METHOD}/detail?timestamp=${Date.now()}`;
     return this.http.post<any>(apiUrl, purchase_detail);

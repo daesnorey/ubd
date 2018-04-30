@@ -46,10 +46,10 @@ export class PurchaseComponent implements OnInit {
 
   ngOnInit() {
     this.get_open_purchases();
-    this.purchaseService.get_domain('PRODUCTO').subscribe(items => {
+    this.thirdPartyService.get_domain('PRODUCTO').subscribe(items => {
       this.products = items;
     });
-    this.purchaseService.get_domain('PRESENTACION').subscribe(items => {
+    this.thirdPartyService.get_domain('PRESENTACION').subscribe(items => {
       this.presentations = items;
     });
   }
@@ -86,7 +86,6 @@ export class PurchaseComponent implements OnInit {
           item.document_number,
           item.names,
           item.surnames,
-          item.third_type,
           0,
           item.marital_status,
           item.start_date
@@ -94,7 +93,7 @@ export class PurchaseComponent implements OnInit {
       });
       this.get_details();
     } else {
-      this.purchase_details = null;
+      this.purchase_details = [];
       this.purchase.sub_cost = 0;
       this.purchase.total_cost = 0;
     }

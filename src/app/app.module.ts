@@ -23,8 +23,10 @@ import {
   MatDividerModule,
   MatProgressBarModule,
   MatProgressSpinnerModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatIconModule
 } from '@angular/material';
+import { ProductionComponent } from './components/production/production.component';
 
 
 @NgModule({
@@ -34,7 +36,8 @@ import {
     ThirdPartyComponent,
     ClientComponent,
     EmployeeComponent,
-    PurchaseComponent
+    PurchaseComponent,
+    ProductionComponent
   ],
   imports: [
     BrowserModule,
@@ -53,6 +56,7 @@ import {
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatIconModule,
     NgbModule.forRoot()
   ],
   providers: [MenuService, HttpClient],

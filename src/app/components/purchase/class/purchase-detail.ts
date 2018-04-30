@@ -19,7 +19,7 @@ export class PurchaseDetail {
         this.id = id;
         this.purchase_id = purchase_id;
         this.product_id = btoa(product_id.toString());
-        this.presentation_id = presentation_id !== undefined ? btoa(presentation_id.toString()) : '';
+        this.presentation_id = btoa(presentation_id.toString());
         this.amount = amount;
         this.unitary_cost = unitary_cost;
         this.total_cost = total_cost;

@@ -6,7 +6,6 @@ export class ThirdParty {
     document_number: string;
     names: string;
     surnames: string;
-    third_type: number;
     born_date: Date;
     marital_status: string;
     start_date: any;
@@ -17,7 +16,6 @@ export class ThirdParty {
         document_number?: string,
         names?: string,
         surnames?: string,
-        third_type?: number,
         born_date?: number,
         marital_status?: string,
         start_date?: any
@@ -27,7 +25,6 @@ export class ThirdParty {
         this.document_number = document_number;
         this.names = names;
         this.surnames = surnames;
-        this.third_type = third_type;
         this.born_date = util.get_date(born_date);
         this.marital_status = marital_status;
         this.start_date = start_date;

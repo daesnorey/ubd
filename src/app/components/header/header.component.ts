@@ -20,6 +20,10 @@ export class HeaderComponent implements OnInit {
     {
       name: 'Compras',
       link: '/purchase'
+    },
+    {
+      name: 'Producción',
+      link: '/production'
     }
   ];
 

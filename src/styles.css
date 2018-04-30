@@ -233,3 +233,46 @@ select[disabled] {
 snack-bar-container.snack-bar-custom {
     background: #1c313a;
 }
+
+div.component-content {
+    display: block!important;
+}
+
+button.add-main-button {
+    position: fixed!important;
+    right: 5%;
+    bottom: 5%;
+    background: #455a64;
+    color: #ffffff;
+}
+
+button.add-button {
+    position: relative!important;
+    right: 5%;
+    bottom: 5%;
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+    background: #455a64;
+    color: #ffffff;
+}
+
+button.add-main-button:hover {
+    background: #1c313a;
+}
+
+div.header-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: 
+    "names . date";
+}
+
+div.header-grid > span.header-names {
+    grid-area: names;
+}
+
+div.header-grid > span.header-date {
+    grid-area: date;
+}
