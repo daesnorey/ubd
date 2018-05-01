@@ -85,7 +85,7 @@ export class ThirdPartyService {
     });
   }
 
-  public get_domain(table: string): Observable<any[]> {
+  public get_domain(table: string, enc=true): Observable<any[]> {
     const apiUrl = `${WS_URL}domain?table=${table}&timestamp=${Date.now()}`;
     return this.http.get(apiUrl)
     .map(res => {
@@ -93,15 +93,16 @@ export class ThirdPartyService {
         return null;
       }
       const result = (res as any[]).map(item => {
-        return {id: btoa(item[0]), name: item[1]};
+        if (enc) return {id: btoa(item[0]), name: item[1]};
+        else return {id: item[0], name: item[1]}
       });
       return result;
     });
   }
 
-  public save(third: ThirdParty): Observable<ThirdParty> {
-    const apiUrl = `${WS_URL}${METHOD}`;
-    return this.http.post<ThirdParty>(apiUrl, third, this.httpOptions);
+  public save(third: ThirdParty) {
+    const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
+    return this.http.post<any>(apiUrl, third);
   }
 
   public get_third(id: number) {
