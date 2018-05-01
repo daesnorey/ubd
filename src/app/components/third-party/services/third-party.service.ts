@@ -5,6 +5,7 @@ import { ThirdParty } from '../class/third-party';
 import { Observable } from 'rxjs/observable';
 import 'rxjs/add/operator/map';
 import { Employee } from '../class/employee';
+import { Client } from '../class/client';
 
 const WS_URL = 'http://localhost:2900/';
 const METHOD = 'third-party';
@@ -105,8 +106,16 @@ export class ThirdPartyService {
     return this.http.post<any>(apiUrl, third);
   }
 
-  public get_third(id: number) {
-    const apiUrl = `${WS_URL}${METHOD}?third_id=${id}`;
-    return this.http.get<ThirdParty>(apiUrl);
+  public get_third(id: number, type=0) {
+    if ( type == 0 ) {
+      const apiUrl = `${WS_URL}${METHOD}?third_id=${id}`;
+      return this.http.get<ThirdParty>(apiUrl);
+    } else if ( type == 1 ) {
+      const apiUrl = `${WS_URL}${METHOD}_client?third_id=${id}`;
+      return this.http.get<any>(apiUrl);
+    } else if ( type == 2 ) {
+      const apiUrl = `${WS_URL}${METHOD}_employee?third_id=${id}`;
+      return this.http.get<any>(apiUrl);
+    }
   }
 }

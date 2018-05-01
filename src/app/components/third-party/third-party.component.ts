@@ -3,9 +3,12 @@ import { ThirdParty } from './class/third-party';
 import { ThirdPartyService } from './services/third-party.service';
 import { Subscription } from 'rxjs/Subscription';
 import { NgbModal, ModalDismissReasons,NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { MatSnackBar } from '@angular/material';
 
 import { Observable } from 'rxjs/observable';
 import { catchError, map, tap } from 'rxjs/operators';
+import { Client } from './class/client';
+import { Employee } from './class/employee';
 
 @Component({
   selector: 'app-third-party',
@@ -17,8 +20,10 @@ export class ThirdPartyComponent implements OnInit {
 
   public third_party: ThirdParty;
   public third_partys: ThirdParty[];
+  public client: Client;
+  public employee: Employee;
+
   public editable = false;
-  
   private page: number;
 
   private marital_status: any[] = null;
@@ -32,8 +37,11 @@ export class ThirdPartyComponent implements OnInit {
   closeResult: string;
 
   constructor(private thirdPartyService: ThirdPartyService,
-    private modalService: NgbModal) {
+    private modalService: NgbModal,
+    public snackBar: MatSnackBar) {
     this.third_party = new ThirdParty();
+    this.client = new Client();
+    this.employee = new Employee();
   }
 
   ngOnInit() {
@@ -42,6 +50,15 @@ export class ThirdPartyComponent implements OnInit {
     });
     this.get_domain('TIPO_DOCUMENTO', false).subscribe(items => {
       this.document_type = items;
+    });
+  }
+
+  private openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['snack-bar-custom']
     });
   }
 
@@ -94,13 +111,58 @@ export class ThirdPartyComponent implements OnInit {
       .toPromise()
       .then(res => {
         if (res.error === 0) {
-          this.thirdModalRef.close('Close click');
+          if (!!res.id) {
+            this.third_party.id = res.id;
+            this.editable = false;
+          }
+          this.openSnackBar('Registro guardado', 'x');
         } else {
           alert('Error');
         }
       }).catch(reason => {
         alert(reason);
       });
-    }
+  }
+  
+  get_client() {
+    this.thirdPartyService.get_third(this.third_party.id, 1)
+      .toPromise()
+      .then(res => {
+        if (!!res.id) {
+          this.client = new Client(
+            res.id,
+            res.third_party_id,
+            res.factor,
+            res.phone,
+            res.address
+          );
+        } else {
+          this.client = new Client();
+        }
+      }).catch(reason => {
+        alert(reason);
+      });
+  }
+
+  get_employee() {
+    this.thirdPartyService.get_third(this.third_party.id, 2)
+      .toPromise()
+      .then(res => {
+        if (!!res.id) {
+          this.employee = new Employee(
+            res.id,
+            res.third_party_id,
+            res.factor,
+            res.phone,
+            res.start_date,
+            res.end_date
+          );
+        } else {
+          this.employee = new Employee();
+        }
+      }).catch(reason => {
+        alert(reason);
+      });
+  }
 
 }

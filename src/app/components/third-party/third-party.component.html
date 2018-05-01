@@ -42,7 +42,7 @@
 </div>
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">Modal title</h4>
+    <h4 class="modal-title">Detalles</h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -90,11 +90,11 @@
           </mat-form-field>
         </div>
         <mat-action-row>
-            <button mat-button color="primary" (click)="save(third_party)">Guardar</button>
+            <button mat-button color="primary" (click)="save(third_party)" [disabled]="!editable">Guardar</button>
         </mat-action-row>
       </mat-expansion-panel>
 
-      <mat-expansion-panel (opened)="panelOpenState = true" [disabled]="!third_party.id">
+      <mat-expansion-panel (opened)="get_client()" [disabled]="!third_party.id">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Cliente
@@ -103,9 +103,22 @@
             Información del cliente
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <app-client></app-client>
+        
+        <div class="col-md-12" *ngIf="client.id; else noClient">
+          <mat-form-field class="col-md-5">
+            <input matInput type="number" [(ngModel)]="client.factor" placeholder="Factor" [disabled]="!editable">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [(ngModel)]="client.phone" placeholder="Teléfono" [disabled]="!editable">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [(ngModel)]="client.address" placeholder="Direccion" [disabled]="!editable">
+          </mat-form-field>
+        </div>
+        <ng-template #noClient> No existe cliente </ng-template>
+          
       </mat-expansion-panel>
-      <mat-expansion-panel (opened)="panelOpenState = true" [disabled]="!third_party.id">
+      <mat-expansion-panel (opened)="get_employee()" [disabled]="!third_party.id">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Empleado
@@ -114,7 +127,27 @@
             Información del empleado
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <app-employee></app-employee>
+
+        <div class="col-md-12" *ngIf="employee.id; else noEmployee">
+          <mat-form-field class="col-md-5">
+            <input matInput type="number" [(ngModel)]="employee.factor" placeholder="Factor" [disabled]="!editable">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput type="tel" [(ngModel)]="employee.phone" placeholder="Teléfono" [disabled]="!editable">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [matDatepicker]="initDate" [(ngModel)]="employee.start_date" placeholder="Fecha de ingreso" [disabled]="!editable">
+            <mat-datepicker-toggle matSuffix [for]="initDate"></mat-datepicker-toggle>
+            <mat-datepicker #initDate></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [matDatepicker]="endDate" [(ngModel)]="employee.end_date" placeholder="Fecha de retiro" [disabled]="!editable">
+            <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+            <mat-datepicker #endDate></mat-datepicker>
+          </mat-form-field>          
+        </div>
+        <ng-template #noEmployee> No existe empleado </ng-template>
+
       </mat-expansion-panel>
     </mat-accordion>
   </div>
