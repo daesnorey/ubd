@@ -16,7 +16,7 @@ export class ThirdParty {
         document_number?: string,
         names?: string,
         surnames?: string,
-        born_date?: number,
+        born_date?: any,
         marital_status?: string,
         start_date?: any
     ) {

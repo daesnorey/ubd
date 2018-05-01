@@ -25,7 +25,8 @@ import {
   MatProgressSpinnerModule,
   MatSnackBarModule,
   MatIconModule,
-  MatMenuModule
+  MatMenuModule,
+  MatExpansionModule
 } from '@angular/material';
 import { ProductionComponent } from './components/production/production.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -61,6 +62,7 @@ import { MenuComponent } from './components/menu/menu.component';
     MatSnackBarModule,
     MatIconModule,
     MatMenuModule,
+    MatExpansionModule,
     NgbModule.forRoot()
   ],
   providers: [MenuService, HttpClient],

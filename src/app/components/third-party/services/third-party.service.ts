@@ -5,6 +5,7 @@ import { ThirdParty } from '../class/third-party';
 import { Observable } from 'rxjs/observable';
 import 'rxjs/add/operator/map';
 import { Employee } from '../class/employee';
+import { Client } from '../class/client';
 
 const WS_URL = 'http://localhost:2900/';
 const METHOD = 'third-party';
@@ -85,7 +86,7 @@ export class ThirdPartyService {
     });
   }
 
-  public get_domain(table: string): Observable<any[]> {
+  public get_domain(table: string, enc=true): Observable<any[]> {
     const apiUrl = `${WS_URL}domain?table=${table}&timestamp=${Date.now()}`;
     return this.http.get(apiUrl)
     .map(res => {
@@ -93,19 +94,28 @@ export class ThirdPartyService {
         return null;
       }
       const result = (res as any[]).map(item => {
-        return {id: btoa(item[0]), name: item[1]};
+        if (enc) return {id: btoa(item[0]), name: item[1]};
+        else return {id: item[0], name: item[1]}
       });
       return result;
     });
   }
 
-  public save(third: ThirdParty): Observable<ThirdParty> {
-    const apiUrl = `${WS_URL}${METHOD}`;
-    return this.http.post<ThirdParty>(apiUrl, third, this.httpOptions);
+  public save(third: ThirdParty) {
+    const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
+    return this.http.post<any>(apiUrl, third);
   }
 
-  public get_third(id: number) {
-    const apiUrl = `${WS_URL}${METHOD}?third_id=${id}`;
-    return this.http.get<ThirdParty>(apiUrl);
+  public get_third(id: number, type=0) {
+    if ( type == 0 ) {
+      const apiUrl = `${WS_URL}${METHOD}?third_id=${id}`;
+      return this.http.get<ThirdParty>(apiUrl);
+    } else if ( type == 1 ) {
+      const apiUrl = `${WS_URL}${METHOD}_client?third_id=${id}`;
+      return this.http.get<any>(apiUrl);
+    } else if ( type == 2 ) {
+      const apiUrl = `${WS_URL}${METHOD}_employee?third_id=${id}`;
+      return this.http.get<any>(apiUrl);
+    }
   }
 }

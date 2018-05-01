@@ -14,7 +14,7 @@ class Util {
                 return new Date(parseInt(result[1], 10), parseInt(result[2], 10) - 1, parseInt(result[3], 10));
             }
         }
-        return new Date();
+        //return new Date();
     }
 }
 
