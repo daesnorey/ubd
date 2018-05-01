@@ -14,12 +14,12 @@ body, html {
     grid-template-rows: 100px 100px;
     grid-template-areas: 
     "header header header header header header "
-    "empty routerOulet routerOulet routerOulet routerOulet routerOulet";
+    "menu routerOulet routerOulet routerOulet routerOulet routerOulet";
 }
 
 .wrapper::before {
     content: "";
-    grid-area: empty;
+    grid-area: menu;
 }
 
 .wrapper > .headerModule {

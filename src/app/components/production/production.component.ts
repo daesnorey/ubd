@@ -9,6 +9,8 @@ import { Production } from './class/production';
 import { Inventory } from './class/inventory';
 import { Employee } from '../third-party/class/employee';
 import { Chart, ChartConfiguration } from 'chart.js';
+import { MenuService } from '../../services/menu.service';
+import { Menu } from '../header/class/menu';
 
 @Component({
   selector: 'app-production',
@@ -56,12 +58,23 @@ export class ProductionComponent implements OnInit {
     private thirdPartyService: ThirdPartyService,
     private modalService: NgbModal,
     public snackBar: MatSnackBar,
-    private router: Router,
-    private route: ActivatedRoute) {
+    private menuService: MenuService) {
       this.set_days_month();
   }
 
   ngOnInit() {
+    const menu: Menu[] = [
+      {
+        link: '/production',
+        name: 'Inicio'
+      },
+      {
+        link: '/inventory',
+        name: 'Inventario'
+      }
+    ];
+
+    this.menuService.addModuleMenu(menu);
     this.chart_ini();
     this.productionService.get_inventory_state()
       .subscribe(res => {
@@ -174,7 +187,7 @@ export class ProductionComponent implements OnInit {
   }
 
   public set_item(item: Employee) {
-    this.router.navigate([`/production/emp/${item.id}`]);
+    // this.router.navigate([`/production/emp/${item.id}`]);
     this.employee = item;
     this.search = `${item.names} ${item.surnames}`;
     this.employeeList = null;
@@ -261,7 +274,7 @@ export class ProductionComponent implements OnInit {
   }
 
   set_production(production: Production) {
-    this.router.navigate([`production/${production.id}`]);
+    // this.router.navigate([`production/${production.id}`]);
     this.production_loading = true;
     this.production = production;
     this.production_detail = new ProductionDetail();

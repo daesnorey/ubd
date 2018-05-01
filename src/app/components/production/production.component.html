@@ -18,10 +18,12 @@
   </div>
   <mat-progress-bar mode="indeterminate" *ngIf="production_loading"></mat-progress-bar>
   <div class="modal-body">
+    <!--
     <button type="button" class="btn">
       <mat-icon>navigate_before</mat-icon>
       <span aria-hidden="true">Volver</span>
     </button>
+    -->
     <div *ngIf="productions; else new" class="header-grid">
       <span class="header-date" *ngIf="production.date && false">{{production.date | date:'yyyy-MM-dd'}}</span>
     </div>
@@ -103,20 +105,16 @@
       </div>
     </ng-template>
     <ng-template [ngIf]="production.id === undefined" #showProductions>
-      <div *ngIf="productions" >
-        <table class="details-title">
+      <div *ngIf="productions" class="col-md-5">
+        <table class="table details-title">
           <thead>
             <tr>
-              <th>ID</th>
               <th>FECHA</th>
               <th>VALOR</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let item of productions" (click)="set_production(item)">
-              <th>
-                <span>{{item.id}}</span>
-              </th>
               <td>
                 <span>{{item.date | date:'yyyy-MM-dd'}}</span>
               </td>

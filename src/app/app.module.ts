@@ -24,9 +24,11 @@ import {
   MatProgressBarModule,
   MatProgressSpinnerModule,
   MatSnackBarModule,
-  MatIconModule
+  MatIconModule,
+  MatMenuModule
 } from '@angular/material';
 import { ProductionComponent } from './components/production/production.component';
+import { MenuComponent } from './components/menu/menu.component';
 
 
 @NgModule({
@@ -37,7 +39,8 @@ import { ProductionComponent } from './components/production/production.componen
     ClientComponent,
     EmployeeComponent,
     PurchaseComponent,
-    ProductionComponent
+    ProductionComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,
@@ -57,6 +60,7 @@ import { ProductionComponent } from './components/production/production.componen
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatIconModule,
+    MatMenuModule,
     NgbModule.forRoot()
   ],
   providers: [MenuService, HttpClient],

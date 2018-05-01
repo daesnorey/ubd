@@ -8,8 +8,3 @@
     </ng-container>
   </div>
 </header>
-<div *ngIf="menuService.moduleMenu">
-  <ng-container *ngFor="let menu of menuService.moduleMenu">
-    <a routerLink="/{{menu.link}}" class="menu">{{menu.name}}</a>      
-  </ng-container>
-</div>

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/observable';
 import { Menu } from '../components/header/class/menu';
 
 @Injectable()
@@ -6,27 +7,14 @@ export class MenuService {
 
   public moduleMenu: Menu[] = [];
 
-  public constructor() { }
+  public constructor() {}
 
-  public cleanModuleMenu(): void {
-    this.moduleMenu = [];
-  }
-
-  public addModuleMenu(menu: Menu): void {
-    if (this.moduleMenu === undefined || this.moduleMenu === null) {
-      this.cleanModuleMenu();
-    }
-
-    this.moduleMenu.push(menu);
-  }
-
-  public setModuleMenu(menu: Menu[]): void {
-    this.cleanModuleMenu();
+  public addModuleMenu(menu: Menu[]): void {
     this.moduleMenu = menu;
   }
 
-  public getModuleMenu(): Menu[] {
-    return this.moduleMenu;
+  public clear() {
+    this.moduleMenu = [];
   }
 
 }

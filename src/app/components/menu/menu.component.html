@@ -1,0 +1,8 @@
+<mat-menu #appMenu="matMenu" yPosition="above">
+  <!--<a href="#" mat-menu-item>Link</a>-->
+  <button mat-menu-item *ngFor="let item of menuService.moduleMenu" (click)="navigate(item.link);">{{item.name}}</button>
+</mat-menu>
+
+<button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="menuService.moduleMenu.length">
+  <mat-icon>more_vert</mat-icon>
+</button>
