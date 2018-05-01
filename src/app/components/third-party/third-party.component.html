@@ -1,9 +1,9 @@
 <div class="thirdPartyDiv">
   <input #search (keyup)=look_up(search.value) placeholder="Busqueda... " id="search">
-  <button id="addButton" (click)="open_modal(content,{})"> + </button>
+  <button id="addButton" (click)="open_modal(content)"> + </button>
 </div>
 <div *ngIf="third_partys" class="thirdPartyDiv">
-  <table class="thirdPartyTable">
+  <table class="table">
     <thead>
       <tr>
         <th>ID</th>
@@ -18,12 +18,24 @@
     <tbody>
       <tr *ngFor="let third of third_partys" (click)="open_modal(content,third)">
         <th>{{third.id}}</th>
-        <td>{{third.document_type}}</td>
+        <td>
+          <select [(ngModel)]="third.document_type" disabled="disabled">
+            <option *ngFor="let item of document_type" [ngValue]="item.id">
+              {{item.name}}
+            </option>
+          </select>
+        </td>
         <td>{{third.document_number}}</td>
         <td>{{third.names}}</td>
         <td>{{third.surnames}}</td>
         <td>{{third.born_date | date:'yyyy-MM-dd'}}</td>
-        <td>{{third.marital_status}}</td>
+        <td>
+          <select [(ngModel)]="third.marital_status" disabled="disabled">
+            <option *ngFor="let item of marital_status" [ngValue]="item.id">
+              {{item.name}}
+            </option>
+          </select>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -36,32 +48,42 @@
     </button>
   </div>
   <div class="modal-body">
-    <fieldset>
-      <legend>Detalle Tercero</legend>
-      <p>
-        Tipo de documento: <input type="text" [(ngModel)]="third_party.document_type" />
-      </p>
-      <p>
-        Numero de documento: <input type="text" [(ngModel)]="third_party.document_number" />
-      </p>
-      <p>
-        Nombres: <input type="text" [(ngModel)]="third_party.names" />
-      </p>
-      <p>
-        Apellidos: <input type="text" [(ngModel)]="third_party.surnames" />
-      </p>
-      <p>
-        Fecha de nacimiento: <input type="text" [(ngModel)]="third_party.born_date" />
-      </p>
-      <p>
-        Estado civil:
-        <select [(ngModel)]="third_party.marital_status">
-          <option *ngFor="let item of marital_status | async" value="{{item.id}}">
-            {{item.name}}
-          </option>
-        </select>
-      </p>
-    </fieldset>
+    <mat-tab-group>
+      <mat-tab label="Tercero">
+        <div class="col-md-12">
+          <mat-form-field class="col-md-5">
+            <mat-select placeholder="Tipo de documento" [(ngModel)]="third_party.document_type" name="document_type" [disabled]="!editable">
+              <mat-option *ngFor="let item of document_type" [value]="item.id">
+                  {{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [(ngModel)]="third_party.document_number" placeholder="Numero de documento" [disabled]="!editable">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [(ngModel)]="third_party.names" placeholder="Nombres" [disabled]="!editable">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [(ngModel)]="third_party.surnames" placeholder="Apellidos" [disabled]="!editable">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [matDatepicker]="matDate" [(ngModel)]="third_party.born_date" placeholder="Fecha de nacimiento" [disabled]="!editable">
+            <mat-datepicker-toggle matSuffix [for]="matDate"></mat-datepicker-toggle>
+            <mat-datepicker #matDate></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <mat-select placeholder="Estado civil" [(ngModel)]="third_party.marital_status" name="marital_status" [disabled]="!editable">
+              <mat-option *ngFor="let item of marital_status" [value]="item.id">
+                  {{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-tab>
+      <mat-tab label="Cliente" [disabled]="!third_party.id">{{third_party.id}}</mat-tab>
+      <mat-tab label="Empleado" [disabled]="!third_party.id">Content 3</mat-tab>
+    </mat-tab-group>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-outline-dark" (click)="c()">Cerrar</button>
