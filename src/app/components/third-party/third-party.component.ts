@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ThirdParty } from './class/third-party';
 import { ThirdPartyService } from './services/third-party.service';
 import { Subscription } from 'rxjs/Subscription';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, ModalDismissReasons,NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { Observable } from 'rxjs/observable';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -16,14 +16,18 @@ import { catchError, map, tap } from 'rxjs/operators';
 export class ThirdPartyComponent implements OnInit {
 
   public third_party: ThirdParty;
+  public third_partys: ThirdParty[];
   public editable = false;
+  
   private page: number;
 
-  private marital_status: Observable<any[]>;
+  private marital_status: any[] = null;
+  private document_type: any[] = null;
 
   private subscription: Subscription = null;
 
-  public third_partys: ThirdParty[];
+  private thirdModalRef: NgbModalRef;
+
   public key;
   closeResult: string;
 
@@ -33,6 +37,12 @@ export class ThirdPartyComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.get_domain('ESTADO_CIVIL', false).subscribe(items => { 
+      this.marital_status = items;
+    });
+    this.get_domain('TIPO_DOCUMENTO', false).subscribe(items => {
+      this.document_type = items;
+    });
   }
 
   public look_up(query?: string) {
@@ -65,18 +75,32 @@ export class ThirdPartyComponent implements OnInit {
   }
 
   open_modal(content: any, selected_third?: ThirdParty) {
-    this.modalService.open(content, { size: 'lg' });
-    this.third_party = selected_third;
-    this.marital_status = this.get_domain('ESTADO_CIVIL');
+    this.thirdModalRef = this.modalService.open(content, { size: 'lg' });
+    if (selected_third) {
+      this.third_party = selected_third;
+      this.editable = false;
+    } else {
+      this.third_party = new ThirdParty();
+      this.editable = true;
+    }
   }
 
-  get_domain(table: string) {
-    return this.thirdPartyService.get_domain(table);
+  get_domain(table: string, enc=true) {
+    return this.thirdPartyService.get_domain(table, enc);
   }
 
   save() {
     this.thirdPartyService.save(this.third_party)
-      .subscribe();
-  }
+      .toPromise()
+      .then(res => {
+        if (res.error === 0) {
+          this.thirdModalRef.close('Close click');
+        } else {
+          alert('Error');
+        }
+      }).catch(reason => {
+        alert(reason);
+      });
+    }
 
 }
