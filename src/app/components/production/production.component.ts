@@ -191,10 +191,10 @@ export class ProductionComponent implements OnInit {
     this.employee = item;
     this.search = `${item.names} ${item.surnames}`;
     this.employeeList = null;
-    this.production = new Production();
-    this.production.employee_id = this.employee.id;
     this.production_loading = true;
-    this.productionService.get_production(this.production)
+    const production = new Production();
+    production.employee_id = this.employee.id;
+    this.productionService.get_production(production)
         .toPromise()
         .then(res => {
           this.production_loading = false;

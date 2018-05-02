@@ -104,7 +104,7 @@
         </table>
       </div>
     </ng-template>
-    <ng-template [ngIf]="production.id === undefined" #showProductions>
+    <ng-template [ngIf]="production === undefined" #showProductions>
       <div *ngIf="productions" class="col-md-5">
         <table class="table details-title">
           <thead>
