@@ -101,11 +101,6 @@ export class ThirdPartyService {
     });
   }
 
-  public save(third: ThirdParty) {
-    const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
-    return this.http.post<any>(apiUrl, third);
-  }
-
   public get_third(id: number, type=0) {
     if ( type == 0 ) {
       const apiUrl = `${WS_URL}${METHOD}?third_id=${id}`;
@@ -118,4 +113,19 @@ export class ThirdPartyService {
       return this.http.get<any>(apiUrl);
     }
   }
+
+  public save(object, type=0) {
+    console.log(object);
+    if ( type == 0 ) {
+      const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
+      return this.http.post<any>(apiUrl, object as ThirdParty);
+    } else if (type == 1) {
+      const apiUrl = `${WS_URL}${METHOD}_client?timestamp=${Date.now()}`;
+      return this.http.post<any>(apiUrl, object as Client);
+    } else if ( type == 2 ) {
+      const apiUrl = `${WS_URL}${METHOD}_employee?timestamp=${Date.now()}`;
+      return this.http.post<any>(apiUrl, object as Employee);
+    }
+  }
+
 }
