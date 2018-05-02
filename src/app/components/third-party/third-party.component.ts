@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ThirdParty } from './class/third-party';
 import { ThirdPartyService } from './services/third-party.service';
 import { Subscription } from 'rxjs/Subscription';
-import { NgbModal, ModalDismissReasons,NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { MatSnackBar } from '@angular/material';
 
 import { Observable } from 'rxjs/observable';
@@ -23,7 +23,9 @@ export class ThirdPartyComponent implements OnInit {
   public client: Client;
   public employee: Employee;
 
-  public editable = false;
+  public editThird = false;
+  public editClient = false;
+  public editEmployee = false;
   private page: number;
 
   private marital_status: any[] = null;
@@ -45,7 +47,7 @@ export class ThirdPartyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.get_domain('ESTADO_CIVIL', false).subscribe(items => { 
+    this.get_domain('ESTADO_CIVIL', false).subscribe(items => {
       this.marital_status = items;
     });
     this.get_domain('TIPO_DOCUMENTO', false).subscribe(items => {
@@ -95,35 +97,19 @@ export class ThirdPartyComponent implements OnInit {
     this.thirdModalRef = this.modalService.open(content, { size: 'lg' });
     if (selected_third) {
       this.third_party = selected_third;
-      this.editable = false;
+      this.editThird = false;
+      this.get_client();
+      this.get_employee();
     } else {
       this.third_party = new ThirdParty();
-      this.editable = true;
+      this.editThird = true;
     }
   }
 
-  get_domain(table: string, enc=true) {
+  get_domain(table: string, enc= true) {
     return this.thirdPartyService.get_domain(table, enc);
   }
 
-  save() {
-    this.thirdPartyService.save(this.third_party)
-      .toPromise()
-      .then(res => {
-        if (res.error === 0) {
-          if (!!res.id) {
-            this.third_party.id = res.id;
-            this.editable = false;
-          }
-          this.openSnackBar('Registro guardado', 'x');
-        } else {
-          alert('Error');
-        }
-      }).catch(reason => {
-        alert(reason);
-      });
-  }
-  
   get_client() {
     this.thirdPartyService.get_third(this.third_party.id, 1)
       .toPromise()
@@ -131,13 +117,15 @@ export class ThirdPartyComponent implements OnInit {
         if (!!res.id) {
           this.client = new Client(
             res.id,
-            res.third_party_id,
+            res.third_id,
             res.factor,
             res.phone,
             res.address
           );
+          this.editClient = false;
         } else {
           this.client = new Client();
+          this.editClient = true;
         }
       }).catch(reason => {
         alert(reason);
@@ -151,14 +139,75 @@ export class ThirdPartyComponent implements OnInit {
         if (!!res.id) {
           this.employee = new Employee(
             res.id,
-            res.third_party_id,
+            res.third_id,
             res.factor,
             res.phone,
             res.start_date,
             res.end_date
           );
+          this.editEmployee = false;
         } else {
           this.employee = new Employee();
+          this.editEmployee = true;
+        }
+      }).catch(reason => {
+        alert(reason);
+      });
+  }
+
+  save_third() {
+    this.thirdPartyService.save(this.third_party)
+      .toPromise()
+      .then(res => {
+        if (res.error === 0) {
+          if (!!res.id) {
+            this.third_party.id = res.id;
+            this.editThird = false;
+          }
+          this.openSnackBar('Tercero guardado', 'x');
+        } else {
+          alert('Error');
+        }
+      }).catch(reason => {
+        alert(reason);
+      });
+  }
+
+  save_client() {
+    this.client.third_id = this.third_party.id;
+    // this.client.start_date = new Date();
+    this.thirdPartyService.save(this.client, 1)
+      .toPromise()
+      .then(res => {
+        console.log(res);
+        if (res.error === 0) {
+          if (!!res.id) {
+            this.client.id = res.id;
+            this.editClient = false;
+          }
+          this.openSnackBar('Cliente guardado', 'x');
+        } else {
+          alert('Error');
+        }
+      }).catch(reason => {
+        alert(reason);
+      });
+  }
+
+  save_employee() {
+    this.employee.third_id = this.third_party.id;
+    this.thirdPartyService.save(this.employee, 2)
+      .toPromise()
+      .then(res => {
+        console.log(res);
+        if (res.error === 0) {
+          if (!!res.id) {
+            this.employee.id = res.id;
+            this.editEmployee = false;
+          }
+          this.openSnackBar('Empleado guardado', 'x');
+        } else {
+          alert('Error');
         }
       }).catch(reason => {
         alert(reason);

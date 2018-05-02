@@ -86,7 +86,7 @@ export class ThirdPartyService {
     });
   }
 
-  public get_domain(table: string, enc=true): Observable<any[]> {
+  public get_domain(table: string, enc= true): Observable<any[]> {
     const apiUrl = `${WS_URL}domain?table=${table}&timestamp=${Date.now()}`;
     return this.http.get(apiUrl)
     .map(res => {
@@ -94,28 +94,41 @@ export class ThirdPartyService {
         return null;
       }
       const result = (res as any[]).map(item => {
-        if (enc) return {id: btoa(item[0]), name: item[1]};
-        else return {id: item[0], name: item[1]}
+        if (enc) {
+          return {id: btoa(item[0]), name: item[1]};
+        } else {
+          return {id: item[0], name: item[1]};
+        }
       });
       return result;
     });
   }
 
-  public save(third: ThirdParty) {
-    const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
-    return this.http.post<any>(apiUrl, third);
-  }
-
-  public get_third(id: number, type=0) {
-    if ( type == 0 ) {
+  public get_third(id: number, type= 0) {
+    if ( type === 0 ) {
       const apiUrl = `${WS_URL}${METHOD}?third_id=${id}`;
       return this.http.get<ThirdParty>(apiUrl);
-    } else if ( type == 1 ) {
+    } else if ( type === 1 ) {
       const apiUrl = `${WS_URL}${METHOD}_client?third_id=${id}`;
       return this.http.get<any>(apiUrl);
-    } else if ( type == 2 ) {
+    } else if ( type === 2 ) {
       const apiUrl = `${WS_URL}${METHOD}_employee?third_id=${id}`;
       return this.http.get<any>(apiUrl);
     }
   }
+
+  public save(object, type= 0) {
+    console.log(object);
+    if ( type === 0 ) {
+      const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
+      return this.http.post<any>(apiUrl, object as ThirdParty);
+    } else if (type === 1) {
+      const apiUrl = `${WS_URL}${METHOD}_client?timestamp=${Date.now()}`;
+      return this.http.post<any>(apiUrl, object as Client);
+    } else if ( type === 2 ) {
+      const apiUrl = `${WS_URL}${METHOD}_employee?timestamp=${Date.now()}`;
+      return this.http.post<any>(apiUrl, object as Employee);
+    }
+  }
+
 }

@@ -48,52 +48,53 @@
     </button>
   </div>
   <div class="modal-body">
-    <mat-expansion-panel expanded hideToggle>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Tercero
-        </mat-panel-title>
-        <mat-panel-description>
-          Información del tercero
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      
-      <div class="col-md-12">
-        <mat-form-field class="col-md-5">
-          <mat-select placeholder="Tipo de documento" [(ngModel)]="third_party.document_type" name="document_type" [disabled]="!editable">
-            <mat-option *ngFor="let item of document_type" [value]="item.id">
-                {{item.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field class="col-md-5">
-          <input matInput [(ngModel)]="third_party.document_number" placeholder="Numero de documento" [disabled]="!editable">
-        </mat-form-field>
-        <mat-form-field class="col-md-5">
-          <input matInput [(ngModel)]="third_party.names" placeholder="Nombres" [disabled]="!editable">
-        </mat-form-field>
-        <mat-form-field class="col-md-5">
-          <input matInput [(ngModel)]="third_party.surnames" placeholder="Apellidos" [disabled]="!editable">
-        </mat-form-field>
-        <mat-form-field class="col-md-5">
-          <input matInput [matDatepicker]="matDate" [(ngModel)]="third_party.born_date" placeholder="Fecha de nacimiento" [disabled]="!editable">
-          <mat-datepicker-toggle matSuffix [for]="matDate"></mat-datepicker-toggle>
-          <mat-datepicker #matDate></mat-datepicker>
-        </mat-form-field>
-        <mat-form-field class="col-md-5">
-          <mat-select placeholder="Estado civil" [(ngModel)]="third_party.marital_status" name="marital_status" [disabled]="!editable">
-            <mat-option *ngFor="let item of marital_status" [value]="item.id">
-                {{item.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <mat-action-row>
-          <button mat-button color="primary" (click)="save(third_party)" [disabled]="!editable">Guardar</button>
-      </mat-action-row>
-    </mat-expansion-panel>
-    <mat-accordion>
-      <mat-expansion-panel (opened)="get_client()" [disabled]="!third_party.id">
+    <mat-accordion multi="true">
+      <mat-expansion-panel expanded hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Tercero
+          </mat-panel-title>
+          <mat-panel-description>
+            Información del tercero
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        
+        <div class="col-md-12">
+          <mat-form-field class="col-md-5">
+            <mat-select placeholder="Tipo de documento" [(ngModel)]="third_party.document_type" name="document_type" [disabled]="!editThird">
+              <mat-option *ngFor="let item of document_type" [value]="item.id">
+                  {{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [(ngModel)]="third_party.document_number" placeholder="Numero de documento" [disabled]="!editThird">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [(ngModel)]="third_party.names" placeholder="Nombres" [disabled]="!editThird">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [(ngModel)]="third_party.surnames" placeholder="Apellidos" [disabled]="!editThird">
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <input matInput [matDatepicker]="matDate" [(ngModel)]="third_party.born_date" placeholder="Fecha de nacimiento" [disabled]="!editThird">
+            <mat-datepicker-toggle matSuffix [for]="matDate"></mat-datepicker-toggle>
+            <mat-datepicker #matDate></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="col-md-5">
+            <mat-select placeholder="Estado civil" [(ngModel)]="third_party.marital_status" name="marital_status" [disabled]="!editThird">
+              <mat-option *ngFor="let item of marital_status" [value]="item.id">
+                  {{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <mat-action-row *ngIf="editThird">
+            <button mat-button color="primary" (click)="save_third()">Guardar</button>
+        </mat-action-row>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [disabled]="!third_party.id">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Cliente
@@ -103,21 +104,24 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         
-        <div class="col-md-12" *ngIf="client.id; else noClient">
-          <mat-form-field class="col-md-5">
-            <input matInput type="number" [(ngModel)]="client.factor" placeholder="Factor" [disabled]="!editable">
+        <div class="col-md-12" *ngIf="createCli || client.id; else noClient">
+          <mat-form-field class="col-md-2">
+            <input matInput type="number" [(ngModel)]="client.factor" placeholder="Factor" [disabled]="!editClient">
+          </mat-form-field>
+          <mat-form-field class="col-md-4">
+            <input matInput [(ngModel)]="client.phone" placeholder="Teléfono" [disabled]="!editClient">
           </mat-form-field>
           <mat-form-field class="col-md-5">
-            <input matInput [(ngModel)]="client.phone" placeholder="Teléfono" [disabled]="!editable">
-          </mat-form-field>
-          <mat-form-field class="col-md-5">
-            <input matInput [(ngModel)]="client.address" placeholder="Direccion" [disabled]="!editable">
+            <input matInput [(ngModel)]="client.address" placeholder="Direccion" [disabled]="!editClient">
           </mat-form-field>
         </div>
         <ng-template #noClient> No existe cliente </ng-template>
-          
+        <mat-action-row *ngIf="!client || !client.id">
+          <button mat-button color="primary" *ngIf="!createCli" (click)="createCli=true; editClient=true">Crear</button>
+          <button mat-button color="primary" *ngIf="createCli" (click)="save_client()" [disabled]="!editClient">Guardar</button>
+        </mat-action-row>  
       </mat-expansion-panel>
-      <mat-expansion-panel (opened)="get_employee()" [disabled]="!third_party.id">
+      <mat-expansion-panel [disabled]="!third_party.id">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Empleado
@@ -127,26 +131,29 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <div class="col-md-12" *ngIf="employee.id; else noEmployee">
+        <div class="col-md-12" *ngIf="createEmp || employee.id; else noEmployee">
           <mat-form-field class="col-md-5">
-            <input matInput type="number" [(ngModel)]="employee.factor" placeholder="Factor" [disabled]="!editable">
+            <input matInput type="number" [(ngModel)]="employee.factor" placeholder="Factor" [disabled]="!editEmployee">
           </mat-form-field>
           <mat-form-field class="col-md-5">
-            <input matInput type="tel" [(ngModel)]="employee.phone" placeholder="Teléfono" [disabled]="!editable">
+            <input matInput type="tel" [(ngModel)]="employee.phone" placeholder="Teléfono" [disabled]="!editEmployee">
           </mat-form-field>
           <mat-form-field class="col-md-5">
-            <input matInput [matDatepicker]="initDate" [(ngModel)]="employee.start_date" placeholder="Fecha de ingreso" [disabled]="!editable">
+            <input matInput [matDatepicker]="initDate" [(ngModel)]="employee.start_date" placeholder="Fecha de ingreso" [disabled]="!editEmployee">
             <mat-datepicker-toggle matSuffix [for]="initDate"></mat-datepicker-toggle>
             <mat-datepicker #initDate></mat-datepicker>
           </mat-form-field>
           <mat-form-field class="col-md-5">
-            <input matInput [matDatepicker]="endDate" [(ngModel)]="employee.end_date" placeholder="Fecha de retiro" [disabled]="!editable">
+            <input matInput [matDatepicker]="endDate" [(ngModel)]="employee.end_date" placeholder="Fecha de retiro" [disabled]="!editEmployee">
             <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
             <mat-datepicker #endDate></mat-datepicker>
           </mat-form-field>          
         </div>
         <ng-template #noEmployee> No existe empleado </ng-template>
-
+        <mat-action-row *ngIf="!employee || !employee.id">
+          <button mat-button color="primary" *ngIf="!createEmp" (click)="createEmp=true; editEmployee=true">Crear</button>
+          <button mat-button color="primary" *ngIf="createEmp" (click)="save_employee()" [disabled]="!editEmployee">Guardar</button>
+        </mat-action-row>  
       </mat-expansion-panel>
     </mat-accordion>
   </div>
