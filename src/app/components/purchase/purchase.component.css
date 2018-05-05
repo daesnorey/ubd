@@ -34,23 +34,3 @@ div.third-results .item-result:hover {
 div.third-results > span > span {
     border-right: 1px solid #ecf0f1;
 }
-
-div.search {
-    display: block;
-    position: relative;
-    width: 100%;
-}
-
-div.search > input {
-    display: block;
-    position: relative;
-    float: none;
-}
-
-div.search > span {
-    display: block;
-    position: absolute;
-    top: 0.5em;
-    left: 1.5em;
-    background: #ecf0f1;
-}

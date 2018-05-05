@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { PurchaseService } from './services/purchase.service';
@@ -7,6 +7,7 @@ import { Purchase } from './class/purchase';
 import { PurchaseDetail } from './class/purchase-detail';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/observable';
+import 'rxjs/add/operator/takeWhile';
 import { ThirdParty } from '../third-party/class/third-party';
 
 @Component({
@@ -15,7 +16,7 @@ import { ThirdParty } from '../third-party/class/third-party';
   styleUrls: ['./purchase.component.css'],
   providers: [PurchaseService, ThirdPartyService]
 })
-export class PurchaseComponent implements OnInit {
+export class PurchaseComponent implements OnInit, OnDestroy {
 
   private thirdPartySubscription: Subscription;
   private thirdPartyList: ThirdParty[];
@@ -37,6 +38,8 @@ export class PurchaseComponent implements OnInit {
   private products: any[] = null;
   private presentations: any[] = null;
 
+  private alive = true;
+
   constructor(private purchaseService: PurchaseService,
     private thirdPartyService: ThirdPartyService,
     private modalService: NgbModal,
@@ -46,12 +49,21 @@ export class PurchaseComponent implements OnInit {
 
   ngOnInit() {
     this.get_open_purchases();
-    this.thirdPartyService.get_domain('PRODUCTO').subscribe(items => {
+    this.thirdPartyService.get_domain('PRODUCTO')
+    .takeWhile(() => this.alive)
+    .subscribe(items => {
       this.products = items;
     });
-    this.thirdPartyService.get_domain('PRESENTACION').subscribe(items => {
+
+    this.thirdPartyService.get_domain('PRESENTACION')
+    .takeWhile(() => this.alive)
+    .subscribe(items => {
       this.presentations = items;
     });
+  }
+
+  ngOnDestroy() {
+    this.alive = false;
   }
 
   private openSnackBar(message: string, action: string) {
@@ -65,12 +77,9 @@ export class PurchaseComponent implements OnInit {
 
   private get_open_purchases() {
     this.purchaseService.get_open_purchases()
-      .toPromise()
-      .then(res => {
+      .takeWhile(() => this.alive)
+      .subscribe(res => {
         this.openPurchases = res;
-      }).catch(reason => {
-        this.openPurchases = null;
-        alert(reason);
       });
   }
 
@@ -101,12 +110,11 @@ export class PurchaseComponent implements OnInit {
   }
 
   get_details() {
-    this.purchaseService.get_details(this.purchase.id)
-      .toPromise()
-      .then(res => {
+    this.purchaseService
+    .get_details(this.purchase.id)
+    .takeWhile(() => this.alive)
+    .subscribe(res => {
         this.purchase_details = res;
-      }).catch(reason => {
-        alert(reason);
       });
   }
 
@@ -120,8 +128,8 @@ export class PurchaseComponent implements OnInit {
     this.purchase_detail.purchase_id = this.purchase.id;
     this.purchase_detail.total_cost = this.purchase_detail.unitary_cost * this.purchase_detail.amount;
     this.purchaseService.save_detail(this.purchase_detail)
-      .toPromise()
-      .then(res => {
+      .takeWhile(() => this.alive)
+      .subscribe(res => {
         this.detail_loading = false;
         if (res.error === 0) {
           if (!!res.id) {
@@ -134,9 +142,6 @@ export class PurchaseComponent implements OnInit {
         } else {
           alert('Error');
         }
-      }).catch(reason => {
-        this.detail_loading = false;
-        alert(reason);
       });
   }
 
@@ -155,8 +160,8 @@ export class PurchaseComponent implements OnInit {
   confirm() {
     this.purchase_loading = true;
     this.purchaseService.close_purchase(this.purchase)
-      .toPromise()
-      .then(res => {
+      .takeWhile(() => this.alive)
+      .subscribe(res => {
         this.purchase_loading = false;
         if (res.error === 0) {
           this.get_open_purchases();
@@ -164,9 +169,6 @@ export class PurchaseComponent implements OnInit {
         } else {
           alert('Error');
         }
-      }).catch(reason => {
-        this.purchase_loading = false;
-        alert(reason);
       });
   }
 
@@ -196,8 +198,8 @@ export class PurchaseComponent implements OnInit {
       this.purchase.date = this.date;
     }
     this.purchaseService.save_purchase(this.purchase)
-        .toPromise()
-        .then(res => {
+        .takeWhile(() => this.alive)
+        .subscribe(res => {
           this.purchase_loading = false;
           if (!!res.id) {
             this.purchase.id = res.id;
@@ -208,9 +210,6 @@ export class PurchaseComponent implements OnInit {
           if (res.error === 0) {
             this.openSnackBar('Compra guardada', 'x');
           }
-        }).catch(reason => {
-          alert(reason);
-          this.purchase_loading = false;
         });
   }
 }

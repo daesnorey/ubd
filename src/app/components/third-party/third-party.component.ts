@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ThirdParty } from './class/third-party';
 import { ThirdPartyService } from './services/third-party.service';
+import { MenuService } from '../../services/menu.service';
 import { Subscription } from 'rxjs/Subscription';
 import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { MatSnackBar } from '@angular/material';
@@ -40,7 +41,8 @@ export class ThirdPartyComponent implements OnInit {
 
   constructor(private thirdPartyService: ThirdPartyService,
     private modalService: NgbModal,
-    public snackBar: MatSnackBar) {
+    public snackBar: MatSnackBar,
+    private menuService: MenuService) {
     this.third_party = new ThirdParty();
     this.client = new Client();
     this.employee = new Employee();
@@ -53,6 +55,7 @@ export class ThirdPartyComponent implements OnInit {
     this.get_domain('TIPO_DOCUMENTO', false).subscribe(items => {
       this.document_type = items;
     });
+    // this.menuService.clear();
   }
 
   private openSnackBar(message: string, action: string) {

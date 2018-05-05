@@ -4,9 +4,13 @@ import { Observable } from 'rxjs/observable';
 import 'rxjs/add/operator/map';
 import { Production } from '../class/production';
 import { ProductionDetail } from '../class/production-detail';
+import { util } from '../../../class/util';
+import { tap, catchError } from 'rxjs/operators';
+import { Inventory } from '../class/inventory';
 
-const WS_URL = 'http://api.frucun.com:2900/';
+const WS_URL = 'http://localhost:2900/';
 const METHOD = 'production';
+const INVENTORY_METHOD = 'inventory';
 
 @Injectable()
 export class ProductionService {
@@ -61,12 +65,12 @@ export class ProductionService {
 
   public save_production(production: Production) {
     const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
-    return this.http.post<any>(apiUrl, production);
+    return this.http.post<any>(apiUrl, util.get_json(production));
   }
 
   public save_production_detail(production_detail: ProductionDetail) {
     const apiUrl = `${WS_URL}${METHOD}/detail?timestamp=${Date.now()}`;
-    return this.http.post<any>(apiUrl, production_detail);
+    return this.http.post<any>(apiUrl, util.get_json(production_detail));
   }
 
   public get_production(production: any) {
@@ -88,10 +92,16 @@ export class ProductionService {
         return response;
       });
       return result;
-    });
+    }).pipe(
+      tap(item => console.log(item, 'fetched')),
+      catchError((err, caught) => {
+        console.error(err, caught);
+        return caught;
+      })
+    );
   }
 
-  get_production_detail(production_detail: any) {
+  public get_production_detail(production_detail: any) {
     const apiUrl = `${WS_URL}${METHOD}/detail?timestamp=${Date.now()}`;
     return this.http.get(apiUrl, {
       params: production_detail
@@ -119,6 +129,12 @@ export class ProductionService {
       });
       return result;
     });
+  }
+
+  public get_inventory(inventory?: any) {
+    const request = util.get_json(inventory || {});
+    const apiUrl = `${WS_URL}${INVENTORY_METHOD}?timestamp=${Date.now()}`;
+    return this.http.get<Inventory[]>(apiUrl, {params: request});
   }
 
 }

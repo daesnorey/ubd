@@ -5,7 +5,7 @@ import { PurchaseDetail } from '../class/purchase-detail';
 import { Observable } from 'rxjs/observable';
 import 'rxjs/add/operator/map';
 
-const WS_URL = 'http://api.frucun.com:2900/';
+const WS_URL = 'http://localhost:2900/';
 const METHOD = 'purchase';
 
 @Injectable()

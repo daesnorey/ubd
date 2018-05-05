@@ -11,10 +11,25 @@ class Util {
                 result = regDate[1].exec(date.toString());
             }
             if (result !== null) {
-                return new Date(parseInt(result[1], 10), parseInt(result[2], 10) - 1, parseInt(result[3], 10));
+                const date_to_return = new Date(parseInt(result[1], 10), parseInt(result[2], 10) - 1, parseInt(result[3], 10));
+                return date_to_return;
             }
         }
-        //return new Date();
+        // return new Date();
+    }
+
+    public get_json(element) {
+        const json = {};
+        const keys = Object.keys(element);
+        for (const key of keys) {
+            const value = element[key];
+            if (value instanceof Date) {
+                json[key] = `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`;
+            } else {
+                json[key] = value;
+            }
+        }
+        return json;
     }
 }
 

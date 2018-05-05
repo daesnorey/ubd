@@ -26,10 +26,13 @@ import {
   MatSnackBarModule,
   MatIconModule,
   MatMenuModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatStepperModule
 } from '@angular/material';
 import { ProductionComponent } from './components/production/production.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { InventoryComponent } from './components/production/inventory/inventory.component';
+import { ProductionViewComponent } from './components/production/production-view/production-view.component';
 
 
 @NgModule({
@@ -41,7 +44,9 @@ import { MenuComponent } from './components/menu/menu.component';
     EmployeeComponent,
     PurchaseComponent,
     ProductionComponent,
-    MenuComponent
+    MenuComponent,
+    InventoryComponent,
+    ProductionViewComponent
   ],
   imports: [
     BrowserModule,
@@ -63,6 +68,7 @@ import { MenuComponent } from './components/menu/menu.component';
     MatIconModule,
     MatMenuModule,
     MatExpansionModule,
+    MatStepperModule,
     NgbModule.forRoot()
   ],
   providers: [MenuService, HttpClient],

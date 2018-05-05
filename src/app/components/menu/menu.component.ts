@@ -20,7 +20,7 @@ export class MenuComponent implements OnInit {
   }
 
   navigate(url: string) {
-    this.router.navigateByUrl(`/${url}`);
+    this.router.navigateByUrl(`${url}`);
   }
 
 }
