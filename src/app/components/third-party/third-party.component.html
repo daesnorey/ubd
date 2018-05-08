@@ -47,8 +47,9 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
   <div class="modal-body">
-    <mat-accordion multi="true">
+    <mat-accordion>
       <mat-expansion-panel expanded hideToggle>
         <mat-expansion-panel-header>
           <mat-panel-title>
@@ -59,38 +60,42 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         
-        <div class="col-md-12">
-          <mat-form-field class="col-md-5">
-            <mat-select placeholder="Tipo de documento" [(ngModel)]="third_party.document_type" name="document_type" [disabled]="!editThird">
-              <mat-option *ngFor="let item of document_type" [value]="item.id">
-                  {{item.name}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field class="col-md-5">
-            <input matInput [(ngModel)]="third_party.document_number" placeholder="Numero de documento" [disabled]="!editThird">
-          </mat-form-field>
-          <mat-form-field class="col-md-5">
-            <input matInput [(ngModel)]="third_party.names" placeholder="Nombres" [disabled]="!editThird">
-          </mat-form-field>
-          <mat-form-field class="col-md-5">
-            <input matInput [(ngModel)]="third_party.surnames" placeholder="Apellidos" [disabled]="!editThird">
-          </mat-form-field>
-          <mat-form-field class="col-md-5">
-            <input matInput [matDatepicker]="matDate" [(ngModel)]="third_party.born_date" placeholder="Fecha de nacimiento" [disabled]="!editThird">
-            <mat-datepicker-toggle matSuffix [for]="matDate"></mat-datepicker-toggle>
-            <mat-datepicker #matDate></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field class="col-md-5">
-            <mat-select placeholder="Estado civil" [(ngModel)]="third_party.marital_status" name="marital_status" [disabled]="!editThird">
-              <mat-option *ngFor="let item of marital_status" [value]="item.id">
-                  {{item.name}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+        <form #thirdForm="ngForm">
+          <div class="col-md-12">
+            <mat-form-field class="col-md-5">
+              <mat-select placeholder="Tipo de documento" [(ngModel)]="third_party.document_type" name="document_type" [disabled]="!editThird" required>
+                <mat-option *ngFor="let item of document_type" [value]="item.id">
+                    {{item.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="col-md-5">
+              <input matInput name="docnumber" [(ngModel)]="third_party.document_number" placeholder="Numero de documento" [disabled]="!editThird" #docnumber="ngModel" required minlength="6" maxlength="25">
+              <mat-error *ngIf="docnumber.invalid && (docnumber.dirty || docnumber.touched) && docnumber.errors.minlength">Name must be at least 6 characters long</mat-error>
+            </mat-form-field>
+            <mat-form-field class="col-md-5">
+              <input matInput name="names" [(ngModel)]="third_party.names" placeholder="Nombres" [disabled]="!editThird" #names="ngModel" required>
+            </mat-form-field>
+            <mat-form-field class="col-md-5" *ngIf="third_party.document_type!='N'">
+              <input matInput name="surnames" [(ngModel)]="third_party.surnames" placeholder="Apellidos" [disabled]="!editThird" #surnames="ngModel" required>
+            </mat-form-field>
+            <mat-form-field class="col-md-5">
+              <input matInput name="born_date" [matDatepicker]="matDate" [(ngModel)]="third_party.born_date" placeholder="Fecha de nacimiento" [disabled]="!editThird">
+              <mat-datepicker-toggle matSuffix [for]="matDate"></mat-datepicker-toggle>
+              <mat-datepicker #matDate></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field class="col-md-5" *ngIf="third_party.document_type!='N'">
+              <mat-select placeholder="Estado civil" [(ngModel)]="third_party.marital_status" name="marital_status" [disabled]="!editThird" required>
+                <mat-option *ngFor="let item of marital_status" [value]="item.id">
+                    {{item.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </form>
+        
         <mat-action-row *ngIf="editThird">
-            <button mat-button color="primary" (click)="save_third()">Guardar</button>
+               <button mat-button color="primary" (click)="save_third()" [disabled]="loading || thirdForm.invalid">Guardar</button>
         </mat-action-row>
       </mat-expansion-panel>
 
