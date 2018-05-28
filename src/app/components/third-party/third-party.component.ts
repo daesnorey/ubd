@@ -27,6 +27,9 @@ export class ThirdPartyComponent implements OnInit {
   public editThird = false;
   public editClient = false;
   public editEmployee = false;
+  public loading = false;
+  private alive = true;
+
   private page: number;
 
   private marital_status: any[] = null;
@@ -37,7 +40,6 @@ export class ThirdPartyComponent implements OnInit {
   private thirdModalRef: NgbModalRef;
 
   public key;
-  closeResult: string;
 
   constructor(private thirdPartyService: ThirdPartyService,
     private modalService: NgbModal,
@@ -56,6 +58,10 @@ export class ThirdPartyComponent implements OnInit {
       this.document_type = items;
     });
     // this.menuService.clear();
+  }
+
+  ngOnDestroy() {
+    this.alive = false;
   }
 
   private openSnackBar(message: string, action: string) {
@@ -159,9 +165,12 @@ export class ThirdPartyComponent implements OnInit {
   }
 
   save_third() {
+    this.loading = true;
     this.thirdPartyService.save(this.third_party)
+      .takeWhile(() => this.alive)
       .toPromise()
       .then(res => {
+        this.loading = false;
         if (res.error === 0) {
           if (!!res.id) {
             this.third_party.id = res.id;
@@ -177,12 +186,13 @@ export class ThirdPartyComponent implements OnInit {
   }
 
   save_client() {
+    this.loading = true;
     this.client.third_id = this.third_party.id;
-    // this.client.start_date = new Date();
     this.thirdPartyService.save(this.client, 1)
+      .takeWhile(() => this.alive)
       .toPromise()
       .then(res => {
-        console.log(res);
+        this.loading = false;
         if (res.error === 0) {
           if (!!res.id) {
             this.client.id = res.id;
@@ -198,11 +208,13 @@ export class ThirdPartyComponent implements OnInit {
   }
 
   save_employee() {
+    this.loading = true;
     this.employee.third_id = this.third_party.id;
     this.thirdPartyService.save(this.employee, 2)
+      .takeWhile(() => this.alive)
       .toPromise()
       .then(res => {
-        console.log(res);
+        this.loading = false;
         if (res.error === 0) {
           if (!!res.id) {
             this.employee.id = res.id;
