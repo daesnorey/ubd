@@ -7,7 +7,7 @@ import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-boo
 import { MatSnackBar } from '@angular/material';
 
 import { Observable } from 'rxjs/observable';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, tap, takeWhile } from 'rxjs/operators';
 import { Client } from './class/client';
 import { Employee } from './class/employee';
 
@@ -17,7 +17,7 @@ import { Employee } from './class/employee';
   styleUrls: ['./third-party.component.css'],
   providers: [ThirdPartyService]
 })
-export class ThirdPartyComponent implements OnInit {
+export class ThirdPartyComponent implements OnInit, OnDestroy {
 
   public third_party: ThirdParty;
   public third_partys: ThirdParty[];
@@ -167,7 +167,9 @@ export class ThirdPartyComponent implements OnInit {
   save_third() {
     this.loading = true;
     this.thirdPartyService.save(this.third_party)
-      .takeWhile(() => this.alive)
+      .pipe(
+        takeWhile(() => this.alive)
+      )
       .toPromise()
       .then(res => {
         this.loading = false;
@@ -189,7 +191,9 @@ export class ThirdPartyComponent implements OnInit {
     this.loading = true;
     this.client.third_id = this.third_party.id;
     this.thirdPartyService.save(this.client, 1)
-      .takeWhile(() => this.alive)
+      .pipe(
+        takeWhile(() => this.alive)
+      )
       .toPromise()
       .then(res => {
         this.loading = false;
@@ -211,7 +215,9 @@ export class ThirdPartyComponent implements OnInit {
     this.loading = true;
     this.employee.third_id = this.third_party.id;
     this.thirdPartyService.save(this.employee, 2)
-      .takeWhile(() => this.alive)
+      .pipe(
+        takeWhile(() => this.alive)
+      )
       .toPromise()
       .then(res => {
         this.loading = false;
