@@ -1,9 +1,11 @@
+
+import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ThirdParty } from '../class/third-party';
 
 import { Observable } from 'rxjs/observable';
-import 'rxjs/add/operator/map';
+
 import { Employee } from '../class/employee';
 import { Client } from '../class/client';
 
@@ -41,8 +43,8 @@ export class ThirdPartyService {
 
   public searh_employee(query: string) {
     const apiUrl = `${WS_URL}${METHOD}/employee?search=1&q=${query}&timestamp=${Date.now()}`;
-    return this.http.get(apiUrl)
-    .map(res => {
+    return this.http.get(apiUrl).pipe(
+    map(res => {
       if (res === null || res === undefined) {
         return null;
       }
@@ -62,12 +64,38 @@ export class ThirdPartyService {
           item.marital_status
         );
       });
-    });
+    }));
+  }
+
+  public get_employee(employee?: Employee) {
+    const apiUrl = `${WS_URL}employee?timestamp=${Date.now()}`;
+    return this.http.get(apiUrl).pipe(
+    map(res => {
+      if (res === null || res === undefined) {
+        return null;
+      }
+      return (res as any[]).map(item => {
+        return new Employee(
+          item.id,
+          item.third_id,
+          item.factor,
+          item.phone,
+          item.start_date,
+          item.end_date,
+          item.document_type,
+          item.document_number,
+          item.names,
+          item.surnames,
+          item.born_date,
+          item.marital_status
+        );
+      });
+    }));
   }
 
   private do_search(url) {
-    return this.http.get(url)
-    .map(res => {
+    return this.http.get(url).pipe(
+    map(res => {
       if (res === null || res === undefined) {
         return null;
       }
@@ -83,13 +111,13 @@ export class ThirdPartyService {
           item.start_date
         );
       });
-    });
+    }));
   }
 
   public get_domain(table: string, enc= true): Observable<any[]> {
     const apiUrl = `${WS_URL}domain?table=${table}&timestamp=${Date.now()}`;
-    return this.http.get(apiUrl)
-    .map(res => {
+    return this.http.get(apiUrl).pipe(
+    map(res => {
       if (res === null || res === undefined) {
         return null;
       }
@@ -101,7 +129,7 @@ export class ThirdPartyService {
         }
       });
       return result;
-    });
+    }));
   }
 
   public get_third(id: number, type= 0) {

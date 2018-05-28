@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -12,7 +12,9 @@ import { ThirdPartyComponent } from './components/third-party/third-party.compon
 import { ClientComponent } from './components/third-party/client/client.component';
 import { EmployeeComponent } from './components/third-party/employee/employee.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { PurchaseComponent } from './components/purchase/purchase.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CalendarModule } from 'angular-calendar';
+
 import {
   MatInputModule,
   MatSelectModule,
@@ -27,12 +29,22 @@ import {
   MatIconModule,
   MatMenuModule,
   MatExpansionModule,
-  MatStepperModule
+  MatStepperModule,
+  MatCardModule,
+  MatBottomSheetModule,
+  MatTabsModule
 } from '@angular/material';
-import { ProductionComponent } from './components/production/production.component';
+import { MovementComponent } from './components/movement/movement.component';
 import { MenuComponent } from './components/menu/menu.component';
-import { InventoryComponent } from './components/production/inventory/inventory.component';
-import { ProductionViewComponent } from './components/production/production-view/production-view.component';
+import { InventoryComponent } from './components/movement/inventory/inventory.component';
+import { ProductionComponent } from './components/movement/production/production.component';
+import { PurchaseComponent } from './components/movement/purchase/purchase.component';
+import { QualityComponent } from './components/movement/purchase/quality/quality.component';
+import { SalesComponent } from './components/sales/sales.component';
+import { CalendarComponent, OptionsBottomSheetComponent } from './components/movement/production/calendar/calendar.component';
+import { BillingComponent } from './components/sales/billing/billing.component';
+import { PurchasingComponent } from './components/sales/purchasing/purchasing.component';
+import { SalesIndicatorComponent } from './components/sales/sales-indicator/sales-indicator.component';
 
 
 @NgModule({
@@ -42,15 +54,27 @@ import { ProductionViewComponent } from './components/production/production-view
     ThirdPartyComponent,
     ClientComponent,
     EmployeeComponent,
+    MovementComponent,
     PurchaseComponent,
     ProductionComponent,
     MenuComponent,
     InventoryComponent,
-    ProductionViewComponent
+    QualityComponent,
+    SalesComponent,
+    CalendarComponent,
+    OptionsBottomSheetComponent,
+    BillingComponent,
+    PurchasingComponent,
+    SalesIndicatorComponent
+  ],
+  entryComponents: [
+    CalendarComponent,
+    OptionsBottomSheetComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     HttpClientModule,
     AppRoutingModule,
@@ -69,7 +93,12 @@ import { ProductionViewComponent } from './components/production/production-view
     MatMenuModule,
     MatExpansionModule,
     MatStepperModule,
-    NgbModule.forRoot()
+    MatCardModule,
+    MatBottomSheetModule,
+    MatTabsModule,
+    NgbModule.forRoot(),
+    BrowserAnimationsModule,
+    CalendarModule.forRoot()
   ],
   providers: [MenuService, HttpClient],
   bootstrap: [AppComponent]

@@ -1,0 +1,189 @@
+<link rel="stylesheet" href="/assets/css/angular-calendar.css">
+<ng-template #modalContent let-close="close">
+  <div class="modal-header">
+    <h5 class="modal-title d-flex flex-row justify-content-around col-md-11">
+      <span class="flex-fill text-capitalize">Producción <mark>{{days[viewDate.getDay()]}}</mark></span> <span class="flex-fill lead text-right">{{viewDate | date:'dd-MM-yyyy'}}</span>
+    </h5>
+    <button type="button" class="close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+  <div class="modal-body">
+    <div *ngIf="productions.length > 1">
+
+    </div>
+    <div *ngIf="production">
+      <ng-container *ngIf="header && header.keys && !production_process">
+        <div *ngFor="let item of header.keys" class="container row">
+          <div class="card bg-light col-md-2">
+            <div class="card-body p-1 text-center text-truncate text-capitalize small">
+              <p class="card-text text-center mt-3">{{products[item]}}</p>
+              <a href="javascript:void(0)" class="text-center btn outline-none">
+                <mat-icon (click)="next_production_process(item)">add_circle_outline</mat-icon>
+              </a>
+            </div>
+          </div>
+          <div class="d-inline-block col-md-10">
+            <div class="d-flex flex-wrap">
+              <ng-container *ngFor="let key of header[item].keys">
+                <div class="card">
+                  <div class="card-header text-center text-truncate text-capitalize small">
+                    {{process[key] | lowercase}}
+                  </div>
+                  <div class="card-body p-1">
+                    <p class="card-text text-center">{{header[item][key]}}</p>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="(!header && production_process) || production_process">
+        <form [formGroup]="formGroups[0]" class="container row">
+          <mat-form-field class="col-md-12">
+            <mat-select placeholder="Producto" [(ngModel)]="production_process.product_id" formControlName="productCtrl" required>
+              <mat-option *ngFor="let item of productionService.products" [value]="item.id">
+                {{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col-md-4">
+            <mat-select placeholder="Proceso" [(ngModel)]="production_process.process_id" formControlName="processCtrl" required (selectionChange)="presentations_filter($event)">
+              <mat-option *ngFor="let item of productionService.process" [value]="item.id">
+                {{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col-md-8">
+            <mat-select placeholder="Empleado" [(ngModel)]="production_process.employee_id" name="employee_id" formControlName="employeeCtrl" required>
+              <mat-option *ngFor="let item of employees" [value]="item.id">
+                  {{item.names}} {{item.surnames}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col-md-4">
+            <input matInput [(ngModel)]="production_process.quantity" placeholder="Cantidad" name="quantity" formControlName="quantityCtrl" required type="number"/>
+          </mat-form-field>
+          <mat-form-field class="col-md-8">
+            <mat-select placeholder="Presentación" [(ngModel)]="production_process.presentation_id" name="presentation_id" formControlName="presentationCtrl" required (mouseenter)="validate_forms_to_save(true, 'processCtrl')" (mouseleave)="validate_forms_to_save(false, 'processCtrl')">
+              <mat-option *ngFor="let item of presentations_filtered" [value]="item.id">
+                {{item.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
+        <span *ngIf="saved">Registro guardado correctamente</span>
+        <div hidden>
+          <button mat-button hidden (click)="end_production_process();">Salir</button>
+          <button mat-button hidden (click)="confirm_production()" [disabled]="production_process.process_id !== final_step">Fin del proceso</button>
+        </div>
+        <div *ngIf="productCtrl && productCtrl.errors.required">
+          Name is required.
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="production_process" type="button" class="btn btn-outline-secondary" (click)="save_production_process()" (mouseenter)="validate_forms_to_save(true)" (mouseleave)="validate_forms_to_save(false)">Guardar</button>
+    <button *ngIf="production_process" type="button" class="btn btn-outline-secondary" (click)="end_production_process()" mat-button>Cancelar</button>
+    <button *ngIf="!production_process" type="button" class="btn btn-outline-secondary" (click)="add_production_process()">Agregar Producto</button>
+    <button *ngIf="!production_process" type="button" class="btn btn-outline-secondary" (click)="close()">Cerrar</button>
+  </div>
+</ng-template>
+
+<div class="col-md-12 row text-center">
+  <div class="col-md-4">
+    <div class="btn-group">
+      <div
+        class="btn btn-primary"
+        mwlCalendarPreviousView
+        [view]="view"
+        [(viewDate)]="viewDate"
+        (viewDateChange)="activeDayIsOpen = false">
+        Anterior
+      </div>
+      <div
+        class="btn btn-outline-secondary"
+        mwlCalendarToday
+        [(viewDate)]="viewDate">
+        Hoy
+      </div>
+      <div
+        class="btn btn-primary"
+        mwlCalendarNextView
+        [view]="view"
+        [(viewDate)]="viewDate"
+        (viewDateChange)="activeDayIsOpen = false">
+        Siguiente
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+  </div>
+  <!--
+  <div class="col-md-4">
+    <div class="btn-group">
+      <div
+        class="btn btn-primary"
+        (click)="view = 'month'"
+        [class.active]="view === 'month'">
+        Mes
+      </div>
+      <div
+        class="btn btn-primary"
+        (click)="view = 'week'"
+        [class.active]="view === 'week'">
+        Semana
+      </div>
+      <div
+        class="btn btn-primary"
+        (click)="view = 'day'"
+        [class.active]="view === 'day'">
+        Día
+      </div>
+    </div>
+  </div>
+  -->
+</div>
+<br>
+<ng-template #customCellTemplate let-day="day" let-locale="locale">
+  <div class="cal-cell-top">
+    <span class="cal-day-badge" *ngIf="day.badgeTotal > 0">{{ day.badgeTotal }}</span>
+    <span class="cal-day-number" [ngClass]="{'rounded bg-dark text-white p-1 border-light': day.isToday}">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+  </div>
+</ng-template>
+<div [ngSwitch]="view">
+  <mwl-calendar-month-view
+    *ngSwitchCase="'month'"
+    [viewDate]="viewDate"
+    [events]="events"
+    [refresh]="refresh"
+    [activeDayIsOpen]="activeDayIsOpen"
+    (dayClicked)="dayClicked($event.day)"
+    (eventClicked)="handleEvent('Clicked', $event.event)"
+    (eventTimesChanged)="eventTimesChanged($event)"
+    [cellTemplate]="customCellTemplate">
+  </mwl-calendar-month-view>
+  <mwl-calendar-week-view
+    *ngSwitchCase="'week'"
+    [viewDate]="viewDate"
+    [events]="events"
+    [refresh]="refresh"
+    (dayHeaderClicked)="dayClicked($event.day)"
+    (eventClicked)="handleEvent('Clicked', $event.event)"
+    (eventTimesChanged)="eventTimesChanged($event)">
+  </mwl-calendar-week-view>
+  <!--
+  <mwl-calendar-day-view
+    *ngSwitchCase="'day'"
+    [viewDate]="viewDate"
+    [events]="events"
+    [refresh]="refresh"
+    (eventClicked)="handleEvent('Clicked', $event.event)"
+    (eventTimesChanged)="eventTimesChanged($event)">
+  </mwl-calendar-day-view>
+  -->
+</div>

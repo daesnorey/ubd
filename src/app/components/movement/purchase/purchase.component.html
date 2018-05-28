@@ -1,0 +1,173 @@
+<router-outlet></router-outlet>
+<div *ngIf="openPurchases && openPurchases.length > 0" class="component-content content">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th>ID TERCERO</th>
+        <th>FECHA</th>
+        <th>VALOR NETO</th>
+        <th>VALOR TOTAL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let purchase of openPurchases" (click)="open_modal(detail,purchase)">
+        <th scope="row">{{purchase.id}}</th>
+        <td>{{purchase.third_party_id}}</td>
+        <td>{{purchase.date | date:'yyyy-MM-dd'}}</td>
+        <td>{{purchase.sub_cost | currency:'$':'symbol'}}</td>
+        <td>{{purchase.total_cost | currency:'$':'symbol'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="component-content content">
+  <button mat-icon-button class="add-main-button" (click)="open_modal(detail,{})">+</button>
+</div>
+
+<ng-template #detail let-c="close" let-d="dismiss" class="modal fade">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="purchase.id; else newTitle">Detalle de compra</h4>
+    <ng-template #newTitle>
+      <h4 class="modal-title">Nueva Compra</h4>
+    </ng-template>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="purchase_loading"></mat-progress-bar>
+  <div class="modal-body">
+    <div *ngIf="purchase.id; else new" class="header-grid">
+      <span *ngIf="third" class="header-names">{{third.names}} {{third.surnames}}</span>
+      <span class="header-date">{{purchase.date | date:'yyyy-MM-dd'}}</span>
+    </div>
+    <ng-template #new>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-7">
+            <mat-form-field class="col-md-12">
+              <input matInput #search (keyup)=look_up(search.value) placeholder="Tercero" [disabled]="purchase_loading || third_tmp">
+            </mat-form-field>
+            <!--<span *ngIf="third_tmp" [class.disabled]="purchase_loading">{{third_tmp.names}} {{third_tmp.surnames}}</span>-->
+            <!--<div class="search">
+            </div>-->
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input matInput [matDatepicker]="matDate" [(ngModel)]="date" placeholder="Fecha" [disabled]="purchase_loading">
+              <mat-datepicker-toggle matSuffix [for]="matDate"></mat-datepicker-toggle>
+              <mat-datepicker #matDate></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div *ngIf="thirdPartyList" class="third-results col-md-7">
+            <mat-list *ngIf="thirdPartyList">
+              <ng-template *ngFor="let third of thirdPartyList" [ngIf]="true">
+                <mat-list-item class="item-result" (click)="set_third(third);search.value = third.names + ' ' +third.surnames">
+                    {{third.document_number}} | {{third.names}} {{third.surnames}}
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              </ng-template>
+            </mat-list>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template [ngIf]="purchase.id">
+      <div *ngIf="purchase.total_cost > 0" >
+        <table class="table purchase-details-title">
+          <thead>
+            <tr>
+              <th>PRODUCTO</th>
+              <th>PRESENTACION</th>
+              <th>CANTIDAD</th>
+              <th>VALOR UNITARIO</th>
+              <th>VALOR TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detail of purchase_details" (click)="add(editDetail,detail)">
+              <td>
+                <select [(ngModel)]="detail.product_id" disabled="disabled">
+                  <option *ngFor="let item of products" [ngValue]="item.id">
+                    {{item.name}}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <select [(ngModel)]="detail.presentation_id" disabled="disabled">
+                  <option *ngFor="let item of presentations" [ngValue]="item.id">
+                    {{item.name}}
+                  </option>
+                </select>
+              </td>
+              <td>
+                <span>{{detail.amount}}</span>
+              </td>
+              <td>
+                <span>{{detail.unitary_cost | currency:'$'}}</span>
+              </td>
+              <td>
+                <span>{{detail.total_cost | currency:'$'}}</span>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="4" class="text-right">Total compra</th>
+              <td>{{purchase.total_cost | currency:'$':'symbol'}}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <ng-template #purchaseEmpty>Aún no hay detalles</ng-template>
+    </ng-template>
+    <div *ngIf="purchase.id">
+        <button mat-icon-button class="add-button" (click)="add(editDetail,{})" [disabled]="purchase_loading">+</button>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="purchase.id" type="button" class="btn btn-outline-dark" (click)="confirm()" [disabled]="purchase_loading || purchase.total_cost < 1">Confirmar</button>
+    <button *ngIf="!purchase.id" mat-button class="btn btn-outline-secondary" (click)="save_purchase()" [disabled]="purchase_loading || !date || !third_tmp">Continuar</button>
+  </div>
+</ng-template>
+
+<ng-template #editDetail let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Adminitra producto</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()" [disabled]="detail_loading">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="detail_loading"></mat-progress-bar>
+  <div class="modal-body">
+    <div *ngIf="purchase_detail; else detailEmpty" class="purchase-detail">
+      <mat-form-field class="col-md-12">
+          <mat-select placeholder="Producto" [(ngModel)]="purchase_detail.product_id" name="product_id" [disabled]="detail_loading">
+            <mat-option *ngFor="let item of products" [value]="item.id">
+                {{item.name}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+      <mat-form-field class="col-md-12">
+          <mat-select placeholder="Presentación" [(ngModel)]="purchase_detail.presentation_id" name="presentation_id" [disabled]="detail_loading">
+            <mat-option *ngFor="let item of presentations" [value]="item.id">
+                {{item.name}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+      <mat-form-field class="col-md-12">
+        <input matInput type="number" [(ngModel)]="purchase_detail.amount" placeholder="Cantidad" [disabled]="detail_loading">
+      </mat-form-field>
+      <mat-form-field class="col-md-12">
+        <input matInput type="number" [(ngModel)]="purchase_detail.unitary_cost" placeholder="Valor unitario" [disabled]="detail_loading">
+      </mat-form-field>
+      <mat-form-field class="col-md-12">
+        <input matInput type="number" [(ngModel)]="purchase_detail.total_cost" readonly="readonly" value="{{purchase_detail.amount*purchase_detail.unitary_cost}}" placeholder="Valor total" [disabled]="detail_loading">
+      </mat-form-field>
+    </div>
+    <ng-template #detailEmpty>Error no deberia estar viendo esta pantalla</ng-template>
+  </div>
+  <div class="modal-footer">     
+    <button type="button" class="btn btn-outline-dark" (click)="saveDetail()" [disabled]="detail_loading || !purchase_detail.amount || !purchase_detail.presentation_id || !purchase_detail.product_id || !purchase_detail.unitary_cost">Guardar</button>
+  </div>
+</ng-template>

@@ -18,12 +18,12 @@ export class HeaderComponent implements OnInit {
       link: '/third-party'
     },
     {
-      name: 'Compras',
-      link: '/purchase'
+      name: 'Ventas',
+      link: '/sales'
     },
     {
-      name: 'Producción',
-      link: '/production'
+      name: 'Movimientos',
+      link: '/movement'
     }
   ];
 

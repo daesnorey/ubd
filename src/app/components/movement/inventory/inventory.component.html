@@ -1,0 +1,50 @@
+<div class="col-md-12 row">
+  <div class="col-lg-4 col-md-12">
+    <h4 class="text-center">Inventario</h4>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover">
+        <thead>
+          <tr>
+            <th class="text-capitalize text-center">producto</th>
+            <th class="text-capitalize text-center">presentacion</th>
+            <th class="text-capitalize text-center">cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of inventory">
+            <td class="text-center">{{products[item.product_id]}}</td>
+            <td class="text-center">{{presentations[item.presentation_id]}}</td>
+            <td class="text-center">{{item.quantity}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-8 col-md-12">
+    <h4 class="text-center">Productos por vencer</h4>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover">
+        <thead>
+          <tr>
+            <th class="text-capitalize text-center">lote</th>
+            <th class="text-capitalize text-center">producto</th>
+            <th class="text-capitalize text-center">presentacion</th>
+            <th class="text-capitalize text-center">fecha alta</th>
+            <th class="text-capitalize text-center">fecha vencimiento</th>
+            <th class="text-capitalize text-center">cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items_to_expire">
+            <th class="text-center">{{item.batch}}</th>
+            <td class="text-center">{{products[item.product_id]}}</td>
+            <td class="text-center">{{presentations[item.presentation_id]}}</td>
+            <td class="text-center">{{item.start_date | date:'yyyy-MM-dd'}}</td>
+            <td class="text-center">{{item.expiration_date | date:'yyyy-MM-dd'}}</td>
+            <td class="text-center">{{item.quantity}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

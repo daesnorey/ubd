@@ -3,7 +3,14 @@
   <a mat-menu-item *ngFor="let item of menuService.moduleMenu" [routerLink]="item.link" class="outline-none">{{item.name}}</a>
 </mat-menu>
 
-<a mat-menu-item *ngFor="let item of menuService.moduleMenu" [routerLink]="item.link" class="outline-none">{{item.name}}</a>
+<div class="col-md-12 row">
+  <ng-container *ngFor="let item of menuService.moduleMenu">
+    <a mat-menu-item  [routerLink]="item.link" class="outline-none col-md-12"
+    [ngClass]="{'bg-dark text-white': this.router.url === item.link, 'bg-white text-dark': this.router.url !== item.link}" (click)="do_action($event)">
+      {{item.name}}
+    </a>
+  </ng-container>
+</div>
 
 <!--
 <button mat-icon-button [matMenuTriggerFor]="appMenu" *ngIf="menuService.moduleMenu.length" class="outline-none">

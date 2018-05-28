@@ -1,0 +1,18 @@
+<mat-tab-group dynamicHeight="true">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      Ventas <em>{{date | date:'yyyy'}}</em>
+    </ng-template>
+    <ng-template matTabContent>
+      <div [hidden]="!chart">
+        <canvas id="canvas">{{ chart }}</canvas>
+      </div>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Tab 2">
+    <ng-template matTabContent>
+      <h1>Some more tab content</h1>
+      <p>...</p>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
