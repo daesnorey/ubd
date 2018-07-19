@@ -9,7 +9,7 @@ import { Observable } from 'rxjs/observable';
 import { Employee } from '../class/employee';
 import { Client } from '../class/client';
 
-const WS_URL = 'http://localhost:2900/';
+const WS_URL = '/frucun/api/';
 const METHOD = 'third-party';
 
 @Injectable()
@@ -43,7 +43,7 @@ export class ThirdPartyService {
 
   public searh_employee(query: string) {
     const apiUrl = `${WS_URL}${METHOD}/employee?search=1&q=${query}&timestamp=${Date.now()}`;
-    return this.http.get(apiUrl).pipe(
+    return this.http.get(apiUrl, this.httpOptions).pipe(
     map(res => {
       if (res === null || res === undefined) {
         return null;
@@ -94,7 +94,7 @@ export class ThirdPartyService {
   }
 
   private do_search(url) {
-    return this.http.get(url).pipe(
+    return this.http.get(url, this.httpOptions).pipe(
     map(res => {
       if (res === null || res === undefined) {
         return null;
@@ -116,7 +116,7 @@ export class ThirdPartyService {
 
   public get_domain(table: string, enc= true): Observable<any[]> {
     const apiUrl = `${WS_URL}domain?table=${table}&timestamp=${Date.now()}`;
-    return this.http.get(apiUrl).pipe(
+    return this.http.get(apiUrl, this.httpOptions).pipe(
     map(res => {
       if (res === null || res === undefined) {
         return null;

@@ -1,0 +1,11 @@
+{
+  "/frucun/api": {
+    "target": "http://localhost:8085/frucun/ws/",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/frucun/api": ""
+    }
+  }
+}
