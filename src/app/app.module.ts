@@ -31,7 +31,8 @@ import {
   MatStepperModule,
   MatCardModule,
   MatBottomSheetModule,
-  MatTabsModule
+  MatTabsModule,
+  MatChipsModule,
 } from '@angular/material';
 import { MovementComponent } from './components/movement/movement.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -94,6 +95,7 @@ import { SalesIndicatorComponent } from './components/sales/sales-indicator/sale
     MatCardModule,
     MatBottomSheetModule,
     MatTabsModule,
+    MatChipsModule,
     NgbModule.forRoot(),
     BrowserAnimationsModule,
     CalendarModule.forRoot()

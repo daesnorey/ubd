@@ -18,3 +18,8 @@ button#addButton:hover {
     background-color: #505050;
     box-shadow: rgba(28,56,72,0.1) 0px 8px 8px;
 }
+
+mat-chip {
+    cursor: pointer;
+}
+  

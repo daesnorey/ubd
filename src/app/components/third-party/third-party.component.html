@@ -2,6 +2,19 @@
   <input #search (keyup)=look_up(search.value) placeholder="Busqueda... " id="search">
   <button id="addButton" (click)="open_modal(content)"> + </button>
 </div>
+<div class="mat-chip-list">
+  <mat-chip-list>
+    <mat-chip (click)="look_up('a')">
+      Terceros
+    </mat-chip>
+    <mat-chip (click)="look_up('LALA')">
+      Clientes
+    </mat-chip>
+    <mat-chip (click)="look_up('1013644408')">
+      Empleados
+    </mat-chip>
+  </mat-chip-list>
+</div>
 <div *ngIf="third_partys" class="content">
   <table class="table-custom">
     <thead>
