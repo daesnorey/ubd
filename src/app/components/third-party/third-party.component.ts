@@ -3,11 +3,10 @@ import { ThirdParty } from './class/third-party';
 import { ThirdPartyService } from './services/third-party.service';
 import { MenuService } from '../../services/menu.service';
 import { Subscription } from 'rxjs';
-import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { MatSnackBar } from '@angular/material';
 
-import { Observable } from 'rxjs/observable';
-import { catchError, map, tap, takeWhile } from 'rxjs/operators';
+import { map, takeWhile } from 'rxjs/operators';
 import { Client } from './class/client';
 import { Employee } from './class/employee';
 
@@ -32,8 +31,8 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
 
   private page: number;
 
-  private marital_status: any[] = null;
-  private document_type: any[] = null;
+  public marital_status: any[] = null;
+  public document_type: any[] = null;
 
   private subscription: Subscription = null;
 
@@ -53,11 +52,17 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.get_domain('ESTADO_CIVIL', false).subscribe(items => {
       this.marital_status = items;
+    }, error => {
+      localStorage.setItem('lastError', JSON.stringify(error));
+      this.openSnackBar('Ha ocurrido un error cargando la sección deseada', 'x');
     });
     this.get_domain('TIPO_DOCUMENTO', false).subscribe(items => {
       this.document_type = items;
+    }, error => {
+      localStorage.setItem('lastError', JSON.stringify(error));
+      this.openSnackBar('Ha ocurrido un error cargando la sección deseada', 'x');
     });
-    // this.menuService.clear();
+    this.menuService.clear();
   }
 
   ngOnDestroy() {
@@ -121,118 +126,128 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
 
   get_client() {
     this.thirdPartyService.get_third(this.third_party.id, 1)
-      .toPromise()
-      .then(res => {
-        if (!!res.id) {
-          this.client = new Client(
-            res.id,
-            res.third_id,
-            res.factor,
-            res.phone,
-            res.address
-          );
-          this.editClient = false;
-        } else {
-          this.client = new Client();
-          this.editClient = true;
-        }
-      }).catch(reason => {
-        alert(reason);
-      });
+    .pipe(
+      takeWhile(() => this.alive)
+    )
+    .subscribe(response => {
+      let res = response as any;
+      if (typeof res[0] !== 'undefined' && !!res[0].id) {
+        res = res[0];
+        this.client = new Client(
+          res.id,
+          res.third_id,
+          res.factor,
+          res.phone,
+          res.address
+        );
+        this.editClient = false;
+      } else {
+        this.client = new Client();
+        this.editClient = true;
+      }
+    }, error => {
+      localStorage.setItem('lasterror', JSON.stringify(error));
+      this.openSnackBar('Error recuperando datos de cliente', 'x');
+    });
   }
 
   get_employee() {
     this.thirdPartyService.get_third(this.third_party.id, 2)
-      .toPromise()
-      .then(res => {
-        if (!!res.id) {
-          this.employee = new Employee(
-            res.id,
-            res.third_id,
-            res.factor,
-            res.phone,
-            res.start_date,
-            res.end_date
-          );
-          this.editEmployee = false;
-        } else {
-          this.employee = new Employee();
-          this.editEmployee = true;
-        }
-      }).catch(reason => {
-        alert(reason);
-      });
+    .pipe(
+      takeWhile(() => this.alive)
+    )
+    .subscribe(response => {
+      let res = response as any;
+      if (typeof res[0] !== 'undefined' && !!res[0].id) {
+        res = res[0];
+        this.employee = new Employee(
+          res.id,
+          res.third_id,
+          res.factor,
+          res.phone,
+          res.start_date,
+          res.end_date
+        );
+        this.editEmployee = false;
+      } else {
+        this.employee = new Employee();
+        this.editEmployee = true;
+      }
+    }, error => {
+      localStorage.setItem('lasterror', JSON.stringify(error));
+      this.openSnackBar('Error recuperando datos de empleado', 'x');
+    });
   }
 
   save_third() {
     this.loading = true;
     this.thirdPartyService.save(this.third_party)
-      .pipe(
-        takeWhile(() => this.alive)
-      )
-      .toPromise()
-      .then(res => {
-        this.loading = false;
-        if (res.error === 0) {
-          if (!!res.id) {
-            this.third_party.id = res.id;
-            this.editThird = false;
-          }
-          this.openSnackBar('Tercero guardado', 'x');
-        } else {
-          alert('Error');
+    .pipe(takeWhile(() => this.alive))
+    .subscribe(response => {
+      const res = response as any;
+      this.loading = false;
+      if (res.code === 0) {
+        if (!!res.id_tercero) {
+          this.third_party.id = res.id_tercero;
+          this.editThird = false;
         }
-      }).catch(reason => {
-        alert(reason);
-      });
+        this.openSnackBar('Tercero guardado', 'x');
+      } else {
+        this.openSnackBar(res.error, 'x');
+      }
+    }, error => {
+      localStorage.setItem('lastError', JSON.stringify(error));
+      this.openSnackBar('Ha ocurrido un error inesperado, vuelva a intentar en unos momentos', 'x');
+    });
   }
 
   save_client() {
     this.loading = true;
     this.client.third_id = this.third_party.id;
     this.thirdPartyService.save(this.client, 1)
-      .pipe(
-        takeWhile(() => this.alive)
-      )
-      .toPromise()
-      .then(res => {
-        this.loading = false;
-        if (res.error === 0) {
-          if (!!res.id) {
-            this.client.id = res.id;
-            this.editClient = false;
-          }
-          this.openSnackBar('Cliente guardado', 'x');
-        } else {
-          alert('Error');
+    .pipe(
+      takeWhile(() => this.alive)
+    )
+    .subscribe(response => {
+      const res = response as any;
+      this.loading = false;
+      if (res.code === 0) {
+        if (!!res.id_cliente) {
+          this.client.id = res.id_cliente;
+          this.editClient = false;
         }
-      }).catch(reason => {
-        alert(reason);
-      });
+        this.openSnackBar('Cliente guardado', 'x');
+      } else {
+        this.openSnackBar(res.error, 'x');
+      }
+    }, error => {
+      localStorage.setItem('lastError', JSON.stringify(error));
+      this.openSnackBar('Ha ocurrido un error inesperado, vuelva a intentar en unos momentos', 'x');
+    });
   }
 
   save_employee() {
     this.loading = true;
     this.employee.third_id = this.third_party.id;
     this.thirdPartyService.save(this.employee, 2)
-      .pipe(
-        takeWhile(() => this.alive)
-      )
-      .toPromise()
-      .then(res => {
-        this.loading = false;
-        if (res.error === 0) {
-          if (!!res.id) {
-            this.employee.id = res.id;
-            this.editEmployee = false;
-          }
-          this.openSnackBar('Empleado guardado', 'x');
-        } else {
-          alert('Error');
+    .pipe(
+      takeWhile(() => this.alive)
+    ).subscribe(response => {
+      const res = response as any;
+      this.loading = false;
+      if (res.code === 0) {
+        if (!!res.id) {
+          this.employee.id = res.id;
+          this.editEmployee = false;
         }
-      }).catch(reason => {
-        alert(reason);
-      });
+        this.openSnackBar('Empleado guardado', 'x');
+      } else {
+        this.openSnackBar(res.error, 'x');
+      }
+    }, error => {
+      localStorage.setItem('lastError', JSON.stringify(error));
+      this.openSnackBar('Ha ocurrido un error inesperado, vuelva a intentar en unos momentos', 'x');
+    });
   }
 
 }

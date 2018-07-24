@@ -1,5 +1,5 @@
 
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ThirdParty } from '../class/third-party';
@@ -18,8 +18,7 @@ export class ThirdPartyService {
   private userKey = 'VWtkR2RXRlhWbk5OVkVsNg==';
   private httpOptions = {
       headers: new HttpHeaders({
-          // 'Content-Type': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
           'userKey': this.userKey
       })
   };
@@ -67,29 +66,37 @@ export class ThirdPartyService {
     }));
   }
 
-  public get_employee(employee?: Employee) {
-    const apiUrl = `${WS_URL}employee?timestamp=${Date.now()}`;
-    return this.http.get(apiUrl).pipe(
-    map(res => {
+  public get_employee() {
+    const apiUrl = `${WS_URL}${METHOD}-employee?timestamp=${Date.now()}`;
+    return this.http.get(apiUrl, this.httpOptions).pipe(
+    map(response => {
+      let res = response as any;
       if (res === null || res === undefined) {
         return null;
       }
-      return (res as any[]).map(item => {
-        return new Employee(
-          item.id,
-          item.third_id,
-          item.factor,
-          item.phone,
-          item.start_date,
-          item.end_date,
-          item.document_type,
-          item.document_number,
-          item.names,
-          item.surnames,
-          item.born_date,
-          item.marital_status
-        );
-      });
+      if (res.code !== 0) {
+        console.log(res);
+        return null;
+      } else {
+        delete res.code;
+        res = Object.keys(res).map(i => res[i]);
+        return res.map(item => {
+          return new Employee(
+            item.id,
+            item.third_id,
+            item.factor,
+            item.phone,
+            item.start_date,
+            item.end_date,
+            item.document_type,
+            item.document_number,
+            item.names,
+            item.surnames,
+            item.born_date,
+            item.marital_status
+          );
+        });
+      }
     }));
   }
 
@@ -123,9 +130,9 @@ export class ThirdPartyService {
       }
       const result = (res as any[]).map(item => {
         if (enc) {
-          return {id: btoa(item[0]), name: item[1]};
+          return {id: btoa(item.id), name: item.name};
         } else {
-          return {id: item[0], name: item[1]};
+          return {id: item.id, name: item.name};
         }
       });
       return result;
@@ -135,27 +142,26 @@ export class ThirdPartyService {
   public get_third(id: number, type= 0) {
     if ( type === 0 ) {
       const apiUrl = `${WS_URL}${METHOD}?third_id=${id}`;
-      return this.http.get<ThirdParty>(apiUrl);
+      return this.http.get<ThirdParty>(apiUrl, this.httpOptions);
     } else if ( type === 1 ) {
-      const apiUrl = `${WS_URL}${METHOD}_client?third_id=${id}`;
-      return this.http.get<any>(apiUrl);
+      const apiUrl = `${WS_URL}${METHOD}-client?third_id=${id}`;
+      return this.http.get<any>(apiUrl, this.httpOptions);
     } else if ( type === 2 ) {
-      const apiUrl = `${WS_URL}${METHOD}_employee?third_id=${id}`;
-      return this.http.get<any>(apiUrl);
+      const apiUrl = `${WS_URL}${METHOD}-employee?third_id=${id}`;
+      return this.http.get<any>(apiUrl, this.httpOptions);
     }
   }
 
   public save(object, type= 0) {
-    console.log(object);
     if ( type === 0 ) {
       const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
-      return this.http.post<any>(apiUrl, object as ThirdParty);
+      return this.http.post<any>(apiUrl, object as ThirdParty, this.httpOptions);
     } else if (type === 1) {
-      const apiUrl = `${WS_URL}${METHOD}_client?timestamp=${Date.now()}`;
-      return this.http.post<any>(apiUrl, object as Client);
+      const apiUrl = `${WS_URL}${METHOD}-client?timestamp=${Date.now()}`;
+      return this.http.post<any>(apiUrl, object as Client, this.httpOptions);
     } else if ( type === 2 ) {
-      const apiUrl = `${WS_URL}${METHOD}_employee?timestamp=${Date.now()}`;
-      return this.http.post<any>(apiUrl, object as Employee);
+      const apiUrl = `${WS_URL}${METHOD}-employee?timestamp=${Date.now()}`;
+      return this.http.post<any>(apiUrl, object as Employee, this.httpOptions);
     }
   }
 
