@@ -59,7 +59,7 @@
             Información del tercero
           </mat-panel-description>
         </mat-expansion-panel-header>
-        
+
         <form #thirdForm="ngForm">
           <div class="col-md-12">
             <mat-form-field class="col-md-5">
@@ -93,7 +93,7 @@
             </mat-form-field>
           </div>
         </form>
-        
+
         <mat-action-row *ngIf="editThird">
                <button mat-button color="primary" (click)="save_third()" [disabled]="loading || thirdForm.invalid">Guardar</button>
         </mat-action-row>
@@ -108,7 +108,7 @@
             Información del cliente
           </mat-panel-description>
         </mat-expansion-panel-header>
-        
+
         <div class="col-md-12" *ngIf="createCli || client.id; else noClient">
           <mat-form-field class="col-md-2">
             <input matInput type="number" [(ngModel)]="client.factor" placeholder="Factor" [disabled]="!editClient">
@@ -124,7 +124,7 @@
         <mat-action-row *ngIf="!client || !client.id">
           <button mat-button color="primary" *ngIf="!createCli" (click)="createCli=true; editClient=true">Crear</button>
           <button mat-button color="primary" *ngIf="createCli" (click)="save_client()" [disabled]="!editClient">Guardar</button>
-        </mat-action-row>  
+        </mat-action-row>
       </mat-expansion-panel>
       <mat-expansion-panel [disabled]="!third_party.id">
         <mat-expansion-panel-header>
@@ -152,13 +152,13 @@
             <input matInput [matDatepicker]="endDate" [(ngModel)]="employee.end_date" placeholder="Fecha de retiro" [disabled]="!editEmployee">
             <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
             <mat-datepicker #endDate></mat-datepicker>
-          </mat-form-field>          
+          </mat-form-field>
         </div>
         <ng-template #noEmployee> No existe empleado </ng-template>
         <mat-action-row *ngIf="!employee || !employee.id">
           <button mat-button color="primary" *ngIf="!createEmp" (click)="createEmp=true; editEmployee=true">Crear</button>
           <button mat-button color="primary" *ngIf="createEmp" (click)="save_employee()" [disabled]="!editEmployee">Guardar</button>
-        </mat-action-row>  
+        </mat-action-row>
       </mat-expansion-panel>
     </mat-accordion>
   </div>
