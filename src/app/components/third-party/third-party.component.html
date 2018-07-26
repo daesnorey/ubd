@@ -4,7 +4,7 @@
 </div>
 <div class="mat-chip-list">
   <mat-chip-list>
-    <mat-chip (click)="look_up('a')">
+    <mat-chip (click)="search_all(0)">
       Terceros
     </mat-chip>
     <mat-chip (click)="look_up('LALA')">
@@ -63,7 +63,7 @@
   <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
   <div class="modal-body">
     <mat-accordion>
-      <mat-expansion-panel expanded hideToggle>
+      <mat-expansion-panel expanded hideToggle [disabled]="editClient || editEmployee">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Tercero
@@ -107,12 +107,13 @@
           </div>
         </form>
 
-        <mat-action-row *ngIf="editThird">
-               <button mat-button color="primary" (click)="save_third()" [disabled]="loading || thirdForm.invalid">Guardar</button>
+        <mat-action-row>
+            <button mat-button *ngIf="!editThird" color="accent" (click)="editThird=true" [disabled]="loading || thirdForm.invalid">Editar</button>
+          <button mat-button *ngIf="editThird" color="primary" (click)="save_third()" [disabled]="loading || thirdForm.invalid">Guardar</button>
         </mat-action-row>
       </mat-expansion-panel>
 
-      <mat-expansion-panel [disabled]="!third_party.id">
+      <mat-expansion-panel [disabled]="!third_party.id || editThird || editEmployee">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Cliente
@@ -134,12 +135,14 @@
           </mat-form-field>
         </div>
         <ng-template #noClient> No existe cliente </ng-template>
-        <mat-action-row *ngIf="!client || !client.id">
-          <button mat-button color="primary" *ngIf="!createCli" (click)="createCli=true; editClient=true">Crear</button>
-          <button mat-button color="primary" *ngIf="createCli" (click)="save_client()" [disabled]="!editClient">Guardar</button>
+        <mat-action-row>
+          <button mat-button color="accent" *ngIf="!editClient && client.id" (click)="editClient=true">Editar</button>
+          <button mat-button color="primary" *ngIf="!createCli && !client.id" (click)="createCli=true; editClient=true">Crear</button>
+          <button mat-button color="primary" *ngIf="createCli || editClient" (click)="save_client()" [disabled]="!editClient">Guardar</button>
         </mat-action-row>
       </mat-expansion-panel>
-      <mat-expansion-panel [disabled]="!third_party.id">
+
+      <mat-expansion-panel [disabled]="!third_party.id || editThird || editClient">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Empleado
@@ -168,9 +171,10 @@
           </mat-form-field>
         </div>
         <ng-template #noEmployee> No existe empleado </ng-template>
-        <mat-action-row *ngIf="!employee || !employee.id">
-          <button mat-button color="primary" *ngIf="!createEmp" (click)="createEmp=true; editEmployee=true">Crear</button>
-          <button mat-button color="primary" *ngIf="createEmp" (click)="save_employee()" [disabled]="!editEmployee">Guardar</button>
+        <mat-action-row>
+          <button mat-button *ngIf="!editEmployee && employee.id" color="accent" (click)="editEmployee=true">Editar</button>
+          <button mat-button color="primary" *ngIf="!createEmp && !employee.id" (click)="createEmp=true; editEmployee=true">Crear</button>
+          <button mat-button color="primary" *ngIf="createEmp || editEmployee" (click)="save_employee()" [disabled]="!editEmployee">Guardar</button>
         </mat-action-row>
       </mat-expansion-panel>
     </mat-accordion>

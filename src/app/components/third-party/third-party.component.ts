@@ -143,7 +143,6 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
         this.editClient = false;
       } else {
         this.client = new Client();
-        this.editClient = true;
       }
     }, error => {
       localStorage.setItem('lasterror', JSON.stringify(error));
@@ -171,7 +170,6 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
         this.editEmployee = false;
       } else {
         this.employee = new Employee();
-        this.editEmployee = true;
       }
     }, error => {
       localStorage.setItem('lasterror', JSON.stringify(error));
@@ -189,8 +187,8 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
       if (res.code === 0) {
         if (!!res.id_tercero) {
           this.third_party.id = res.id_tercero;
-          this.editThird = false;
         }
+        this.editThird = false;
         this.openSnackBar('Tercero guardado', 'x');
       } else {
         this.openSnackBar(res.error, 'x');
@@ -214,8 +212,8 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
       if (res.code === 0) {
         if (!!res.id_cliente) {
           this.client.id = res.id_cliente;
-          this.editClient = false;
         }
+        this.editClient = false;
         this.openSnackBar('Cliente guardado', 'x');
       } else {
         this.openSnackBar(res.error, 'x');
@@ -238,8 +236,8 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
       if (res.code === 0) {
         if (!!res.id) {
           this.employee.id = res.id;
-          this.editEmployee = false;
         }
+        this.editEmployee = false;
         this.openSnackBar('Empleado guardado', 'x');
       } else {
         this.openSnackBar(res.error, 'x');
@@ -248,6 +246,13 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
       localStorage.setItem('lastError', JSON.stringify(error));
       this.openSnackBar('Ha ocurrido un error inesperado, vuelva a intentar en unos momentos', 'x');
     });
+  }
+
+  public search_all(type: number) {
+    this.clean_search();
+    this.subscription = this.thirdPartyService
+                            .get_third(undefined, type)
+                            .subscribe(result => this.third_partys = result);
   }
 
 }
