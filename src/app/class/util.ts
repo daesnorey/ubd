@@ -13,7 +13,9 @@ class Util {
             } else if (regDate[1].test(date.toString())) {
                 groups = regDate[1].exec(date.toString());
             }
-            result = new Date(parseInt(groups[1], 10), parseInt(groups[2], 10) - 1, parseInt(groups[3], 10));
+            if (groups !== null) {
+              result = new Date(parseInt(groups[1], 10), parseInt(groups[2], 10) - 1, parseInt(groups[3], 10));
+            }
         }
         if (result !== null) {
             return result;
@@ -32,6 +34,21 @@ class Util {
             }
         }
         return json;
+    }
+
+    public extract_response(res: any): any {
+      if (res === null || res === undefined) {
+        return false;
+      }
+      const response: any = {};
+      response.code = res.code;
+      response.error = res.text || res.error;
+      if (!response.code && response.code === 0) {
+        delete res.code;
+        res = Object.keys(res).map(i => res[i]);
+        response.data = res;
+      }
+      return response;
     }
 }
 
