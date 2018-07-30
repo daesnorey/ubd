@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/observable';
 import { Menu } from '../components/header/class/menu';
 
 @Injectable()
