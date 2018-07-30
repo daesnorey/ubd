@@ -19,31 +19,23 @@
       <tr *ngFor="let third of third_partys" (click)="open_modal(content,third)">
         <th>{{third.id}}</th>
         <td>
-          <select [(ngModel)]="third.document_type" disabled="disabled">
-            <option *ngFor="let item of document_type" [ngValue]="item.id">
-              {{item.name}}
-            </option>
-          </select>
+          {{document_type.get(third.document_type)}}
         </td>
         <td>{{third.document_number}}</td>
         <td>{{third.names}}</td>
         <td>{{third.surnames}}</td>
         <td>{{third.born_date | date:'yyyy-MM-dd'}}</td>
         <td>
-          <select [(ngModel)]="third.marital_status" disabled="disabled">
-            <option *ngFor="let item of marital_status" [ngValue]="item.id">
-              {{item.name}}
-            </option>
-          </select>
+          {{marital_status.get(third.marital_status)}}
         </td>
       </tr>
     </tbody>
   </table>
 </div>
-<ng-template #content let-c="close" let-d="dismiss">
+<ng-template #content let-c="close()" let-d="dismiss()">
   <div class="modal-header">
     <h4 class="modal-title">Detalles</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d()">
+    <button type="button" class="close" aria-label="Close" (click)="d">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -64,14 +56,14 @@
           <div class="col-md-12">
             <mat-form-field class="col-md-5">
               <mat-select placeholder="Tipo de documento" [(ngModel)]="third_party.document_type" name="document_type" [disabled]="!editThird" required>
-                <mat-option *ngFor="let item of document_type" [value]="item.id">
+                <mat-option *ngFor="let item of document_type | values" [value]="item.id">
                     {{item.name}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
             <mat-form-field class="col-md-5">
               <input matInput name="docnumber" [(ngModel)]="third_party.document_number" placeholder="Numero de documento" [disabled]="!editThird" #docnumber="ngModel" required minlength="6" maxlength="25">
-              <mat-error *ngIf="docnumber.invalid && (docnumber.dirty || docnumber.touched) && docnumber.errors.minlength">Name must be at least 6 characters long</mat-error>
+              <mat-error *ngIf="docnumber.invalid && (docnumber.dirty || docnumber.touched) && docnumber?.errors?.minlength">Name must be at least 6 characters long</mat-error>
             </mat-form-field>
             <mat-form-field class="col-md-5">
               <input matInput name="names" [(ngModel)]="third_party.names" placeholder="Nombres" [disabled]="!editThird" #names="ngModel" required>
@@ -86,7 +78,7 @@
             </mat-form-field>
             <mat-form-field class="col-md-5" *ngIf="third_party.document_type!='N'">
               <mat-select placeholder="Estado civil" [(ngModel)]="third_party.marital_status" name="marital_status" [disabled]="!editThird" required>
-                <mat-option *ngFor="let item of marital_status" [value]="item.id">
+                <mat-option *ngFor="let item of marital_status | values" [value]="item.id">
                     {{item.name}}
                 </mat-option>
               </mat-select>
@@ -109,7 +101,7 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <div class="col-md-12" *ngIf="createCli || client.id; else noClient">
+        <div class="col-md-12" *ngIf="client.id; else noClient">
           <mat-form-field class="col-md-2">
             <input matInput type="number" [(ngModel)]="client.factor" placeholder="Factor" [disabled]="!editClient">
           </mat-form-field>
@@ -123,7 +115,7 @@
         <ng-template #noClient> No existe cliente </ng-template>
         <mat-action-row *ngIf="!client || !client.id">
           <button mat-button color="primary" *ngIf="!createCli" (click)="createCli=true; editClient=true">Crear</button>
-          <button mat-button color="primary" *ngIf="createCli" (click)="save_client()" [disabled]="!editClient">Guardar</button>
+          <button mat-button color="primary" *ngIf="!!createCli" (click)="save_client()" [disabled]="!editClient">Guardar</button>
         </mat-action-row>
       </mat-expansion-panel>
       <mat-expansion-panel [disabled]="!third_party.id">
@@ -136,7 +128,7 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <div class="col-md-12" *ngIf="createEmp || employee.id; else noEmployee">
+        <div class="col-md-12" *ngIf="!!createEmp || employee.id; else noEmployee">
           <mat-form-field class="col-md-5">
             <input matInput type="number" [(ngModel)]="employee.factor" placeholder="Factor" [disabled]="!editEmployee">
           </mat-form-field>
@@ -157,12 +149,12 @@
         <ng-template #noEmployee> No existe empleado </ng-template>
         <mat-action-row *ngIf="!employee || !employee.id">
           <button mat-button color="primary" *ngIf="!createEmp" (click)="createEmp=true; editEmployee=true">Crear</button>
-          <button mat-button color="primary" *ngIf="createEmp" (click)="save_employee()" [disabled]="!editEmployee">Guardar</button>
+          <button mat-button color="primary" *ngIf="!!createEmp" (click)="save_employee()" [disabled]="!editEmployee">Guardar</button>
         </mat-action-row>
       </mat-expansion-panel>
     </mat-accordion>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="c()">Cerrar</button>
+    <button type="button" class="btn btn-outline-dark" (click)="c">Cerrar</button>
   </div>
 </ng-template>

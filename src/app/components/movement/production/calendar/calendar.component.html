@@ -1,10 +1,10 @@
 <link rel="stylesheet" href="/assets/css/angular-calendar.css">
-<ng-template #modalContent let-close="close">
+<ng-template #modalContent let-close="close()">
   <div class="modal-header">
     <h5 class="modal-title d-flex flex-row justify-content-around col-md-11">
       <span class="flex-fill text-capitalize">Producción <mark>{{days[viewDate.getDay()]}}</mark></span> <span class="flex-fill lead text-right">{{viewDate | date:'dd-MM-yyyy'}}</span>
     </h5>
-    <button type="button" class="close" (click)="close()">
+    <button type="button" class="close" (click)="close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -40,56 +40,52 @@
           </div>
         </div>
       </ng-container>
-      <ng-container *ngIf="(!header && production_process) || production_process">
-        <form [formGroup]="formGroups[0]" class="container row">
+      <ng-container *ngIf="(!header && formGroup) || formGroup">
+        <form [formGroup]="formGroup" class="container row">
           <mat-form-field class="col-md-12">
-            <mat-select placeholder="Producto" [(ngModel)]="production_process.product_id" formControlName="productCtrl" required>
-              <mat-option *ngFor="let item of productionService.products" [value]="item.id">
+            <mat-select placeholder="Producto" formControlName="product_id" required>
+              <mat-option *ngFor="let item of productionService.products | values" [value]="item.id">
                 {{item.name}}
               </mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field class="col-md-4">
-            <mat-select placeholder="Proceso" [(ngModel)]="production_process.process_id" formControlName="processCtrl" required (selectionChange)="presentations_filter($event)">
-              <mat-option *ngFor="let item of productionService.process" [value]="item.id">
+            <mat-select placeholder="Proceso" formControlName="process_id" required (selectionChange)="presentations_filter($event)">
+              <mat-option *ngFor="let item of productionService.process | values" [value]="item.id">
                 {{item.name}}
               </mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field class="col-md-8">
-            <mat-select placeholder="Empleado" [(ngModel)]="production_process.employee_id" name="employee_id" formControlName="employeeCtrl" required>
+            <mat-select placeholder="Empleado" name="employee_id" formControlName="employee_id" required>
               <mat-option *ngFor="let item of employees" [value]="item.id">
                   {{item.names}} {{item.surnames}}
               </mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field class="col-md-4">
-            <input matInput [(ngModel)]="production_process.quantity" placeholder="Cantidad" name="quantity" formControlName="quantityCtrl" required type="number"/>
+            <input matInput placeholder="Cantidad" name="quantity" formControlName="quantity" required type="number"/>
           </mat-form-field>
           <mat-form-field class="col-md-8">
-            <mat-select placeholder="Presentación" [(ngModel)]="production_process.presentation_id" name="presentation_id" formControlName="presentationCtrl" required (mouseenter)="validate_forms_to_save(true, 'processCtrl')" (mouseleave)="validate_forms_to_save(false, 'processCtrl')">
+            <mat-select placeholder="Presentación" name="presentation_id" formControlName="presentation_id" required (mouseenter)="validate_forms_to_save(true, 'processCtrl')" (mouseleave)="validate_forms_to_save(false, 'processCtrl')">
               <mat-option *ngFor="let item of presentations_filtered" [value]="item.id">
                 {{item.name}}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </form>
-        <span *ngIf="saved">Registro guardado correctamente</span>
         <div hidden>
           <button mat-button hidden (click)="end_production_process();">Salir</button>
-          <button mat-button hidden (click)="confirm_production()" [disabled]="production_process.process_id !== final_step">Fin del proceso</button>
-        </div>
-        <div *ngIf="productCtrl && productCtrl.errors.required">
-          Name is required.
+          <button mat-button hidden (click)="confirm_production();" [disabled]="formGroup?.constrols?.process_id?.value !== final_step">Fin del proceso</button>
         </div>
       </ng-container>
     </div>
   </div>
   <div class="modal-footer">
-    <button *ngIf="production_process" type="button" class="btn btn-outline-secondary" (click)="save_production_process()" (mouseenter)="validate_forms_to_save(true)" (mouseleave)="validate_forms_to_save(false)">Guardar</button>
-    <button *ngIf="production_process" type="button" class="btn btn-outline-secondary" (click)="end_production_process()" mat-button>Cancelar</button>
-    <button *ngIf="!production_process" type="button" class="btn btn-outline-secondary" (click)="add_production_process()">Agregar Producto</button>
-    <button *ngIf="!production_process" type="button" class="btn btn-outline-secondary" (click)="close()">Cerrar</button>
+    <button *ngIf="formGroup" type="button" class="btn btn-outline-secondary" (click)="save_production_process()" (mouseenter)="validate_forms_to_save(true)" (mouseleave)="validate_forms_to_save(false)">Guardar</button>
+    <button *ngIf="formGroup" type="button" class="btn btn-outline-secondary" (click)="end_production_process()" mat-button>Cancelar</button>
+    <button *ngIf="!formGroup" type="button" class="btn btn-outline-secondary" (click)="add_production_process()">Agregar Producto</button>
+    <button *ngIf="!formGroup" type="button" class="btn btn-outline-secondary" (click)="close">Cerrar</button>
   </div>
 </ng-template>
 

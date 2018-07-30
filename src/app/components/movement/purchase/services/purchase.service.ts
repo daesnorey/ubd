@@ -1,42 +1,27 @@
 
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Purchase } from '../class/purchase';
 import { PurchaseDetail } from '../class/purchase-detail';
 import { Observable } from 'rxjs/observable';
+import { util } from '../../../../class/util';
+import { HttpService, WS_URL } from '../../../../services/http.service';
 
 
-const WS_URL = 'http://localhost:2900/';
 const METHOD = 'purchase';
 
 @Injectable()
 export class PurchaseService {
 
-  private userKey = 'VWtkR2RXRlhWbk5OVkVsNg==';
-  private httpOptions = {
-      headers: new HttpHeaders({
-          // 'Content-Type': 'application/json',
-          'Content-Type': 'application/json; charset=utf-8',
-          'Data-Type': 'json',
-          'userKey': this.userKey,
-          'method': 'POST',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Access-Control-Allow-Methods': 'POST',
-          'Access-Control-Allow-Origin': '*'
-      })
-  };
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpService) { }
 
   public get_open_purchases(): Observable<Purchase[]> {
-    const apiUrl = `${WS_URL}${METHOD}/open?timestamp=${Date.now()}`;
-    return this.http.get(apiUrl).pipe(
+    const apiUrl = `${WS_URL}${METHOD}?state=0&timestamp=${Date.now()}`;
+    return this.http.get(apiUrl)
+    .pipe(
       map(res => {
-        if (res === null || res === undefined) {
-          return null;
-        }
-        const results = (res as any[]).map( item => {
+        const results = res.map( item => {
           return new Purchase(
             item.id,
             item.third_party_id,
@@ -47,17 +32,17 @@ export class PurchaseService {
           );
         });
         return results;
-      }));
+      })
+    );
   }
 
   public get_details(id: number): Observable<PurchaseDetail[]> {
-    const apiUrl = `${WS_URL}${METHOD}/detail?purchase_id=${id}&timestamp=${Date.now()}`;
-    return this.http.get(apiUrl).pipe(
+    const apiUrl = `${WS_URL}${METHOD}-detail?purchase_id=${id}&timestamp=${Date.now()}`;
+    return this.http
+    .get(apiUrl)
+    .pipe(
       map(res => {
-        if (res === null || res === undefined) {
-          return null;
-        }
-        const result = (res as any[]).map(item => {
+        const result = res.map(item => {
           return new PurchaseDetail(
             item.id,
             item.purchase_id,
@@ -73,19 +58,19 @@ export class PurchaseService {
   }
 
   public save_detail(purchase_detail: PurchaseDetail) {
-    const apiUrl = `${WS_URL}${METHOD}/detail?timestamp=${Date.now()}`;
-    return this.http.post<any>(apiUrl, purchase_detail);
+    const apiUrl = `${WS_URL}${METHOD}-detail?timestamp=${Date.now()}`;
+    return this.http.post(apiUrl, purchase_detail);
   }
 
   public save_purchase(purchase: Purchase) {
     const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
-    return this.http.post<any>(apiUrl, purchase);
+    return this.http.post(apiUrl, purchase);
   }
 
   public close_purchase(purchase: Purchase) {
     const apiUrl = `${WS_URL}${METHOD}?timestamp=${Date.now()}`;
     purchase.state = 1;
-    return this.http.post<any>(apiUrl, purchase);
+    return this.http.post(apiUrl, purchase);
   }
 
 }

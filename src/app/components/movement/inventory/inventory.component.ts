@@ -1,11 +1,9 @@
-
-import {takeWhile} from 'rxjs/operators';
+import { takeWhile } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProductionService } from '../services/production.service';
 import { ThirdPartyService } from '../../third-party/services/third-party.service';
 
 import { Inventory } from '../class/inventory';
-import { Production } from '../class/production';
 
 @Component({
   selector: 'app-inventory',
@@ -16,10 +14,10 @@ import { Production } from '../class/production';
 export class InventoryComponent implements OnInit, OnDestroy {
 
   private alive = true;
-  private inventory: Inventory[];
-  private items_to_expire: Inventory[];
-  private presentations: {};
-  private products: {};
+  public inventory: Inventory[];
+  public items_to_expire: Inventory[];
+  public presentations: {};
+  public products: {};
 
   constructor(private productionService: ProductionService,
     private thirdPartyService: ThirdPartyService) { }
@@ -39,11 +37,11 @@ export class InventoryComponent implements OnInit, OnDestroy {
     if (!this.presentations) {
       this.presentations = {};
     }
-    this.thirdPartyService.get_domain('PRESENTACION', false).pipe(
-    takeWhile(() => this.alive))
+    this.thirdPartyService.get_domain('PRESENTACION', false)
+    .pipe(takeWhile(() => this.alive))
     .subscribe(items => {
-      for (const item of items) {
-        this.presentations[item.id] = item.name;
+      for (const [id, name] of items) {
+        this.presentations[id] = name;
       }
     }, error => {
       console.log(error);
@@ -57,8 +55,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.thirdPartyService.get_domain('PRODUCTO', false).pipe(
       takeWhile(() => this.alive))
       .subscribe(items => {
-        for (const item of items) {
-          this.products[item.id] = item.name;
+        for (const [id, name] of items) {
+          this.products[id] = name;
         }
       }, error => {
         console.log(error);

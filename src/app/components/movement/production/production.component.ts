@@ -1,9 +1,8 @@
 
 import { takeWhile } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
-import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { ProductionService } from '../services/production.service';
 import { ThirdPartyService } from '../../third-party/services/third-party.service';
@@ -47,8 +46,8 @@ export class ProductionComponent implements OnInit, OnDestroy {
   private production_loading = false;
   private search: string;
 
-  private products: any[] = null;
-  private presentations: any[] = null;
+  public products: Map<string, string> = null;
+  public presentations: Map<string, string> = null;
 
   private main_modal: NgbModalRef;
   private detail_modal: NgbModalRef;

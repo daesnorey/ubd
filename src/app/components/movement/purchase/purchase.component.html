@@ -25,13 +25,13 @@
   <button mat-icon-button class="add-main-button" (click)="open_modal(detail,{})">+</button>
 </div>
 
-<ng-template #detail let-c="close" let-d="dismiss" class="modal fade">
+<ng-template #detail let-c="close()" let-d="dismiss()" class="modal fade">
   <div class="modal-header">
     <h4 class="modal-title" *ngIf="purchase.id; else newTitle">Detalle de compra</h4>
     <ng-template #newTitle>
       <h4 class="modal-title">Nueva Compra</h4>
     </ng-template>
-    <button type="button" class="close" aria-label="Close" (click)="d()">
+    <button type="button" class="close" aria-label="Close" (click)="d">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -87,18 +87,10 @@
           <tbody>
             <tr *ngFor="let detail of purchase_details" (click)="add(editDetail,detail)">
               <td>
-                <select [(ngModel)]="detail.product_id" disabled="disabled">
-                  <option *ngFor="let item of products" [ngValue]="item.id">
-                    {{item.name}}
-                  </option>
-                </select>
+                {{products.get(detail.product_id)}}
               </td>
               <td>
-                <select [(ngModel)]="detail.presentation_id" disabled="disabled">
-                  <option *ngFor="let item of presentations" [ngValue]="item.id">
-                    {{item.name}}
-                  </option>
-                </select>
+                {{presentations.get(detail.presentation_id)}}
               </td>
               <td>
                 <span>{{detail.amount}}</span>
@@ -134,7 +126,7 @@
 <ng-template #editDetail let-c="close" let-d="dismiss">
   <div class="modal-header">
     <h4 class="modal-title">Adminitra producto</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d()" [disabled]="detail_loading">
+    <button type="button" class="close" aria-label="Close" (click)="d" [disabled]="detail_loading">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -143,14 +135,14 @@
     <div *ngIf="purchase_detail; else detailEmpty" class="purchase-detail">
       <mat-form-field class="col-md-12">
           <mat-select placeholder="Producto" [(ngModel)]="purchase_detail.product_id" name="product_id" [disabled]="detail_loading">
-            <mat-option *ngFor="let item of products" [value]="item.id">
+            <mat-option *ngFor="let item of products | values" [value]="item.id">
                 {{item.name}}
             </mat-option>
           </mat-select>
       </mat-form-field>
       <mat-form-field class="col-md-12">
           <mat-select placeholder="Presentación" [(ngModel)]="purchase_detail.presentation_id" name="presentation_id" [disabled]="detail_loading">
-            <mat-option *ngFor="let item of presentations" [value]="item.id">
+            <mat-option *ngFor="let item of presentations | values" [value]="item.id">
                 {{item.name}}
             </mat-option>
           </mat-select>
@@ -167,7 +159,7 @@
     </div>
     <ng-template #detailEmpty>Error no deberia estar viendo esta pantalla</ng-template>
   </div>
-  <div class="modal-footer">     
+  <div class="modal-footer">
     <button type="button" class="btn btn-outline-dark" (click)="saveDetail()" [disabled]="detail_loading || !purchase_detail.amount || !purchase_detail.presentation_id || !purchase_detail.product_id || !purchase_detail.unitary_cost">Guardar</button>
   </div>
 </ng-template>

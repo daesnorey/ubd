@@ -9,12 +9,8 @@ import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from
 import {
   startOfDay,
   endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
   isSameDay,
   isSameMonth,
-  addHours,
   isFuture,
   isPast
 } from 'date-fns';
@@ -25,14 +21,12 @@ import {
   CalendarEventAction,
   CalendarEventTimesChangedEvent
 } from 'angular-calendar';
-import { WeekDay, MonthViewDay } from 'calendar-utils';
 import { ProductionService } from '../../services/production.service';
 import { Production } from '../../class/production';
 import { ProductionProcess } from '../../class/production-process';
 import { ThirdPartyService } from '../../../third-party/services/third-party.service';
 import { Employee } from '../../../third-party/class/employee';
 import { takeWhile } from 'rxjs/operators';
-import { MatStepper, MatStep, MatBottomSheetRef, MatBottomSheet } from '@angular/material';
 import { ProductionDetail } from '../../class/production-detail';
 
 @Component({
@@ -44,61 +38,42 @@ import { ProductionDetail } from '../../class/production-detail';
 export class CalendarComponent implements OnInit, OnDestroy {
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
-  private view = 'month';
-  private days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+  public view = 'month';
+  public days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
 
-  private viewDate: Date = new Date();
+  public viewDate: Date = new Date();
   private modalRef: NgbModalRef;
 
-  private modalData: {
+  protected modalData: {
     action: string;
     event: CalendarEvent;
   };
 
-  private actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fa fa-fw fa-pencil"></i>',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      }
-    },
-    {
-      label: '<i class="fa fa-fw fa-times"></i>',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter(iEvent => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      }
-    }
-  ];
+  public loading = false;
+  public refresh: Subject<any> = new Subject();
 
-  private next = false;
-  private loading = false;
-  private refresh: Subject<any> = new Subject();
+  public events: CalendarEvent[] = [];
 
-  private events: CalendarEvent[] = [];
+  public activeDayIsOpen = false;
 
-  private activeDayIsOpen = false;
-
-  private presentations_filtered: any[] = [];
+  public presentations_filtered: any[] = [];
   private production_processes: ProductionProcess[];
-  private production_process: ProductionProcess;
-  private header: any;
-  private productions: Production[] = [];
-  private production: Production;
-  private employees: Employee[];
-  private products: any = {};
+  public header: any;
+  public productions: Production[] = [];
+  public production: Production;
+  public employees: Employee[];
+  public products: any = {};
   private presentations: any = {};
-  private process: any = {};
+  public process: any = {};
   private alive = true;
-  private final_step = btoa('L');
+  public final_step = btoa('L');
 
-  private formGroups: FormGroup[] = [];
+  public formGroup: FormGroup;
 
   constructor(private modal: NgbModal,
-    private productionService: ProductionService,
+    public productionService: ProductionService,
     private thirdPartyService: ThirdPartyService,
-    private _formBuilder: FormBuilder,
-    private bottomSheet: MatBottomSheet) {}
+    private _formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.set_presentations();
@@ -120,54 +95,42 @@ export class CalendarComponent implements OnInit, OnDestroy {
       .subscribe(process => {
         this.set_process(process);
     });
-    this.formGroups.push(this._formBuilder.group({
-      productCtrl: ['', Validators.required],
-      processCtrl: ['', Validators.required],
-      employeeCtrl: ['', Validators.required],
-      presentationCtrl: ['', Validators.required],
-      quantityCtrl: ['', Validators.required],
-      })
-    );
   }
 
   ngOnDestroy() {
     this.alive = false;
-    this.next = false;
   }
 
-  private set_presentations(presentations?) {
+  private set_presentations(presentations?: Map<string, string>) {
     if (!presentations) {
       presentations = this.productionService.get_presentations();
     }
 
     presentations
-    .forEach(item => {
-      const key = atob(item.id);
-      this.presentations[key] = item.name;
+    .forEach((value, key) => {
+      this.presentations[atob(key)] = value;
     });
   }
 
-  private set_products(products?) {
+  private set_products(products?: Map<string, string>) {
     if (!products) {
       products = this.productionService.get_products();
     }
 
     products
-    .forEach(item => {
-      const key = atob(item.id);
-      this.products[key] = item.name;
+    .forEach((value, key) => {
+      this.products[atob(key)] = value;
     });
   }
 
-  private set_process(process?) {
+  private set_process(process?: Map<string, string>) {
     if (!process) {
       process = this.productionService.get_process();
     }
 
     process
-    .forEach(item => {
-      const key = atob(item.id);
-      this.process[key] = item.name;
+    .forEach((value, key) => {
+      this.process[atob(key)] = value;
     });
   }
 
@@ -196,7 +159,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
           this.get_production_process();
         } else if (this.productions.length === 0) {
           this.production = new Production();
-          this.production_process = new ProductionProcess();
+          this.production.date = date;
+          this.formGroup = this.initProductionProcessGoup();
         }
         subscribed.unsubscribe();
         this.loading = false;
@@ -244,32 +208,38 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.header.keys = Object.keys(header);
   }
 
-  private presentations_filter(event) {
+  public presentations_filter(event) {
     this.loading = true;
     this.presentations_filtered = [];
-    const presentation_process = {process_id: this.production_process.process_id};
+    const presentation_process = {process_id: this.formGroup.value.process_id};
     this.productionService
       .get_process_presentation(presentation_process)
       .pipe(takeWhile(() => this.alive))
       .subscribe(item => {
         item.forEach(next => {
-          const presentation = this.productionService.get_presentations()
-            .find((current) =>  {
-              const id = atob(current.id);
-              return parseInt(id, 10) === next.presentation_id;
-            });
-          this.presentations_filtered.push(presentation);
+          let presentation;
+          this.productionService.get_presentations().forEach((value, key) => {
+            const id = atob(key);
+            if (parseInt(id, 10) === parseInt(next.presentation_id, 10)) {
+              presentation = {id: key, name: value};
+              this.presentations_filtered.push(presentation);
+            }
+          });
         });
         if (this.presentations_filtered.length === 1) {
-          this.production_process.presentation_id = this.presentations_filtered[0].id;
+          this.formGroup.controls.presentation_id.setValue(this.presentations_filtered[0].id);
+        } else {
+          this.presentations_filtered.unshift({id: -1, name: ''});
+          this.formGroup.controls.presentation_id.setValue(-1);
         }
         this.loading = false;
       });
   }
 
-  private add_production_process() {
-    this.production_process = new ProductionProcess();
-    this.production_process.production_id = this.production.id;
+  public add_production_process() {
+    this.formGroup = this.initProductionProcessGoup({
+      production_id: this.production.id
+    });
   }
 
   private save_production(callback?: Function) {
@@ -278,17 +248,17 @@ export class CalendarComponent implements OnInit, OnDestroy {
     .subscribe(res => {
       if (res.id) {
         this.production.id = res.id;
+        if (callback) {
+          callback();
+        }
       }
       subscribed.unsubscribe();
       this.loading = false;
-      if (callback) {
-        callback();
-      }
     });
   }
 
-  private save_production_process() {
-    if (this.formGroups[0].invalid) {
+  public save_production_process() {
+    if (this.formGroup.invalid) {
       this.validate_forms_to_save(true);
       return;
     }
@@ -300,21 +270,21 @@ export class CalendarComponent implements OnInit, OnDestroy {
       if (!this.production_processes) {
         this.production_processes = [];
       }
-      this.production_process.production_id = this.production.id;
-      const subscribed = this.productionService.save_production_process(this.production_process)
+      const production_process = this.formGroup.value;
+      production_process.production_id = this.production.id;
+      const subscribed = this.productionService
+        .save_production_process(production_process)
         .pipe(takeWhile(() => this.alive))
         .subscribe(res => {
-          const production_process = this.production_process;
           let index = -1;
           if (res.id) {
             production_process.id = res.id;
-            this.production_process.id = res.id;
           } else {
-            index = this.production_processes.findIndex((element, i) => element.id === this.production_process.id);
+            index = this.production_processes.findIndex((element, i) => element.id === production_process.id);
           }
-          production_process.product_id = parseInt(atob(this.production_process.product_id), 10);
-          production_process.presentation_id = parseInt(atob(this.production_process.presentation_id.toString()), 10);
-          production_process.process_id = atob(this.production_process.process_id);
+          production_process.product_id = parseInt(atob(this.formGroup.controls.product_id.value), 10);
+          production_process.presentation_id = parseInt(atob(this.formGroup.controls.presentation_id.value), 10);
+          production_process.process_id = atob(this.formGroup.controls.process_id.value);
           if (index >= 0) {
             this.production_processes[index] = production_process;
           } else {
@@ -331,24 +301,18 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
   }
 
-  private next_production_process(item) {
-    // this.bottomSheet.open(OptionsBottomSheetComponent);
-    this.next = true;
-    this.production_process = new ProductionProcess();
-    this.production_process.production_id = this.production.id;
-    this.production_process.product_id = btoa(item);
-    this.formGroups[0].controls.productCtrl.disable();
+  public next_production_process(item) {
+    this.formGroup.controls.prodcut_id.disable();
   }
 
   private clean_production_process() {
-    this.production_process = null;
+    this.formGroup = null;
     this.header = null;
     this.validate_forms_to_save(false);
-    this.formGroups[0].controls.productCtrl.enable();
-    this.next = false;
+    this.formGroup.controls.product_id.enable();
   }
 
-  private end_production_process() {
+  public end_production_process() {
     this.clean_production_process();
     if (this.production_processes && this.production_processes.length > 0) {
       this.set_process_header();
@@ -358,16 +322,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   private validate_forms_to_save(valida: boolean, key?: string) {
-    for (const formGroup of this.formGroups) {
-      if (key) {
-        if (formGroup.controls[key]) {
-          this.mark_as_touched(formGroup.controls[key], valida);
-        }
-      } else {
-        const keys = Object.keys(formGroup.controls);
-        for (const current of keys) {
-          this.mark_as_touched(formGroup.controls[current], valida);
-        }
+    if (key) {
+      if (this.formGroup.controls[key]) {
+        this.mark_as_touched(this.formGroup.controls[key], valida);
+      }
+    } else {
+      const keys = Object.keys(this.formGroup.controls);
+      for (const current of keys) {
+        this.mark_as_touched(this.formGroup.controls[current], valida);
       }
     }
   }
@@ -414,7 +376,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private start_production_process(date: Date, events?: CalendarEvent[]): void {
     this.production_processes = null;
     this.header = null;
-    this.formGroups[0].controls.productCtrl.enable();
     this.viewDate = date;
     this.get_productions(date);
     this.modalRef = this.modal.open(this.modalContent, {
@@ -425,6 +386,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.modalRef.result.then(result => {
       this.clean_production_process();
     });
+  }
+
+  confirm_production() {
+
   }
 
   eventTimesChanged({
@@ -459,39 +424,21 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.refresh.next();
   }
 
-}
+  private initProductionProcessGoup(values?: any) {
+    const formGroup = this._formBuilder.group({
+      product_id: ['', Validators.required],
+      process_id: ['', Validators.required],
+      employee_id: ['', Validators.required],
+      presentation_id: ['', Validators.required],
+      quantity: ['', Validators.required],
+    });
 
-@Component({
-  selector: 'app-bottom-sheet',
-  template: `
-    <mat-nav-list>
-      <a href="https://keep.google.com/" mat-list-item (click)="openLink($event)">
-        <span mat-line>Google Keep</span>
-        <span mat-line>Add to a note</span>
-      </a>
+    if (values && Object.keys(values).length > 0) {
+      for (const key of Object.keys(values)) {
+        formGroup.controls[key].setValue(values[key]);
+      }
+    }
 
-      <a href="https://docs.google.com/" mat-list-item (click)="openLink($event)">
-        <span mat-line>Google Docs</span>
-        <span mat-line>Embed in a document</span>
-      </a>
-
-      <a href="https://plus.google.com/" mat-list-item (click)="openLink($event)">
-        <span mat-line>Google Plus</span>
-        <span mat-line>Share with your friends</span>
-      </a>
-
-      <a href="https://hangouts.google.com/" mat-list-item (click)="openLink($event)">
-        <span mat-line>Google Hangouts</span>
-        <span mat-line>Show to your coworkers</span>
-      </a>
-    </mat-nav-list>
-  `,
-})
-export class OptionsBottomSheetComponent {
-  constructor(private bottomSheetRef: MatBottomSheetRef<OptionsBottomSheetComponent>) {}
-
-  openLink(event: MouseEvent): void {
-    this.bottomSheetRef.dismiss();
-    event.preventDefault();
+    return formGroup;
   }
 }

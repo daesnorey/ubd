@@ -40,10 +40,11 @@ import { ProductionComponent } from './components/movement/production/production
 import { PurchaseComponent } from './components/movement/purchase/purchase.component';
 import { QualityComponent } from './components/movement/purchase/quality/quality.component';
 import { SalesComponent } from './components/sales/sales.component';
-import { CalendarComponent, OptionsBottomSheetComponent } from './components/movement/production/calendar/calendar.component';
+import { CalendarComponent } from './components/movement/production/calendar/calendar.component';
 import { BillingComponent } from './components/sales/billing/billing.component';
 import { PurchasingComponent } from './components/sales/purchasing/purchasing.component';
 import { SalesIndicatorComponent } from './components/sales/sales-indicator/sales-indicator.component';
+import { ValuesPipe } from './pipes/values.pipe';
 
 
 @NgModule({
@@ -61,14 +62,13 @@ import { SalesIndicatorComponent } from './components/sales/sales-indicator/sale
     QualityComponent,
     SalesComponent,
     CalendarComponent,
-    OptionsBottomSheetComponent,
     BillingComponent,
     PurchasingComponent,
-    SalesIndicatorComponent
+    SalesIndicatorComponent,
+    ValuesPipe
   ],
   entryComponents: [
     CalendarComponent,
-    OptionsBottomSheetComponent
   ],
   imports: [
     BrowserModule,

@@ -13,6 +13,7 @@ import { Observable } from 'rxjs/observable';
 import { ThirdParty } from '../../third-party/class/third-party';
 import { Menu } from '../../header/class/menu';
 import { MenuService } from '../../../services/menu.service';
+import { util } from '../../../class/util';
 
 @Component({
   selector: 'app-purchase',
@@ -23,24 +24,24 @@ import { MenuService } from '../../../services/menu.service';
 export class PurchaseComponent implements OnInit, OnDestroy {
 
   private thirdPartySubscription: Subscription;
-  private thirdPartyList: ThirdParty[];
-  private third: ThirdParty;
+  public thirdPartyList: ThirdParty[];
+  public third: ThirdParty;
 
-  private third_tmp: ThirdParty;
-  private date: any;
-  private purchase_loading = false;
-  private detail_loading = false;
+  public third_tmp: ThirdParty;
+  public date: any;
+  public purchase_loading = false;
+  public detail_loading = false;
 
-  private purchase: Purchase;
-  private openPurchases: Purchase[] = null;
-  private purchase_details: PurchaseDetail[];
-  private purchase_detail: PurchaseDetail;
+  public purchase: Purchase;
+  public openPurchases: Purchase[] = null;
+  public purchase_details: PurchaseDetail[];
+  public purchase_detail: PurchaseDetail;
 
   private detailModalRef: NgbModalRef;
   private purchaseModalRef: NgbModalRef;
 
-  private products: any[] = null;
-  private presentations: any[] = null;
+  public products: Map<string, string> = null;
+  public presentations: Map<string, string> = null;
 
   private oldMenu: Menu[];
 
@@ -110,7 +111,16 @@ export class PurchaseComponent implements OnInit, OnDestroy {
     this.third_tmp = null;
     this.date = null;
     if (!!this.purchase.id) {
-      this.thirdPartyService.get_third(this.purchase.third_party_id).subscribe(item => {
+      this.thirdPartyService.get_third(this.purchase.third_party_id).subscribe(response => {
+        const res = util.extract_response(response);
+        let item: any;
+        if (res === false) {
+          return null;
+        } else if (res.code > 0) {
+          return res;
+        } else {
+          item = res.data[0];
+        }
         this.third = new ThirdParty(
           item.id,
           item.document_type,
@@ -133,11 +143,11 @@ export class PurchaseComponent implements OnInit, OnDestroy {
 
   get_details() {
     this.purchaseService
-    .get_details(this.purchase.id).pipe(
-    takeWhile(() => this.alive))
+    .get_details(this.purchase.id)
+    .pipe(takeWhile(() => this.alive))
     .subscribe(res => {
-        this.purchase_details = res;
-      });
+      this.purchase_details = res;
+    });
   }
 
   add(content, detail: PurchaseDetail) {
@@ -149,28 +159,28 @@ export class PurchaseComponent implements OnInit, OnDestroy {
     this.detail_loading = true;
     this.purchase_detail.purchase_id = this.purchase.id;
     this.purchase_detail.total_cost = this.purchase_detail.unitary_cost * this.purchase_detail.amount;
-    this.purchaseService.save_detail(this.purchase_detail).pipe(
-      takeWhile(() => this.alive))
-      .subscribe(res => {
-        this.detail_loading = false;
-        if (res.error === 0) {
-          if (!!res.id) {
-            this.purchase_detail.id = res.id;
-            this.purchase_details.push(this.purchase_detail);
-          }
-          this.openSnackBar('Registro guardado', 'x');
-          this.detailModalRef.close('Close click');
-          this.update_purchase_total();
-        } else {
-          alert('Error');
+    this.purchaseService.save_detail(this.purchase_detail)
+    .pipe(takeWhile(() => this.alive))
+    .subscribe(res => {
+      this.detail_loading = false;
+      if (res.code === 0) {
+        if (!!res.id_detalle_compra) {
+          this.purchase_detail.id = res.id_detalle_compra;
+          this.purchase_details.push(this.purchase_detail as PurchaseDetail);
         }
-      });
+        this.openSnackBar('Registro guardado', 'x');
+        this.detailModalRef.close('Close click');
+        this.update_purchase_total();
+      } else {
+        this.openSnackBar('Ha ocurrido un error al guardar', 'x');
+      }
+    });
   }
 
   private update_purchase_total() {
     let total = 0;
     this.purchase_details.forEach(item => {
-      total += item.total_cost;
+      total += parseFloat(item.total_cost.toString());
     });
 
     if (total !== this.purchase.total_cost) {
@@ -219,19 +229,21 @@ export class PurchaseComponent implements OnInit, OnDestroy {
       this.purchase.state = 0;
       this.purchase.date = this.date;
     }
-    this.purchaseService.save_purchase(this.purchase).pipe(
-        takeWhile(() => this.alive))
-        .subscribe(res => {
-          this.purchase_loading = false;
-          if (!!res.id) {
-            this.purchase.id = res.id;
-            this.third = this.third_tmp;
-            this.third_tmp = null;
-            this.openPurchases.push(this.purchase);
-          }
-          if (res.error === 0) {
-            this.openSnackBar('Compra guardada', 'x');
-          }
-        });
+    this.purchaseService.save_purchase(this.purchase)
+    .pipe(takeWhile(() => this.alive))
+    .subscribe(res => {
+      this.purchase_loading = false;
+      if (!!res.id_compra) {
+        this.purchase.id = res.id_compra;
+        this.third = this.third_tmp;
+        this.third_tmp = null;
+        this.openPurchases.push(this.purchase);
+      }
+      if (res.code === 0) {
+        this.openSnackBar('Compra guardada', 'x');
+      } else {
+        this.openSnackBar('Ha ocurrido un error al guardar', 'x');
+      }
+    });
   }
 }

@@ -31,8 +31,8 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
 
   private page: number;
 
-  public marital_status: any[] = null;
-  public document_type: any[] = null;
+  public marital_status: Map<string, string> = null;
+  public document_type: Map<string, string> = null;
 
   private subscription: Subscription = null;
 
@@ -183,17 +183,14 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.thirdPartyService.save(this.third_party)
     .pipe(takeWhile(() => this.alive))
-    .subscribe(response => {
-      const res = response as any;
+    .subscribe(res => {
       this.loading = false;
-      if (res.code === 0) {
-        if (!!res.id_tercero) {
-          this.third_party.id = res.id_tercero;
-          this.editThird = false;
+      if (!res.code) {
+        if (!!res.id) {
+          this.third_party.id = res.id;
         }
+        this.editThird = false;
         this.openSnackBar('Tercero guardado', 'x');
-      } else {
-        this.openSnackBar(res.error, 'x');
       }
     }, error => {
       localStorage.setItem('lastError', JSON.stringify(error));
@@ -208,17 +205,14 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
     .pipe(
       takeWhile(() => this.alive)
     )
-    .subscribe(response => {
-      const res = response as any;
+    .subscribe(res => {
       this.loading = false;
-      if (res.code === 0) {
-        if (!!res.id_cliente) {
-          this.client.id = res.id_cliente;
-          this.editClient = false;
+      if (!res.code) {
+        if (!!res.id) {
+          this.client.id = res.id;
         }
+        this.editClient = false;
         this.openSnackBar('Cliente guardado', 'x');
-      } else {
-        this.openSnackBar(res.error, 'x');
       }
     }, error => {
       localStorage.setItem('lastError', JSON.stringify(error));
@@ -232,17 +226,14 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
     this.thirdPartyService.save(this.employee, 2)
     .pipe(
       takeWhile(() => this.alive)
-    ).subscribe(response => {
-      const res = response as any;
+    ).subscribe(res => {
       this.loading = false;
-      if (res.code === 0) {
+      if (!res.code) {
         if (!!res.id) {
           this.employee.id = res.id;
-          this.editEmployee = false;
         }
+        this.editEmployee = false;
         this.openSnackBar('Empleado guardado', 'x');
-      } else {
-        this.openSnackBar(res.error, 'x');
       }
     }, error => {
       localStorage.setItem('lastError', JSON.stringify(error));
