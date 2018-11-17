@@ -1,0 +1,17 @@
+SQL> SELECT ID_PRODUCTO || ',' || NOMBRE || ',' || DESCRIPCION_PRODUCTO || ',' || ID_TIPO_PRODUCTO || ',' || ESTADO || ',' || ID_AGRUPACION FROM PRODUCTO;
+
+ID_PRODUCTO||','||NOMBRE||','||DESCRIPCION_PRODUCTO||','||ID_TIPO_PRODUCTO||','|
+--------------------------------------------------------------------------------
+1,MORA,MORA SILVESTRE,1,1,                                                      
+2,FRESA,FRESA SILVESTRE,1,1,                                                    
+3,MARACUYA,MARACUYA SILVESTRE,1,1,                                              
+4,PAPAYA,PAPAYA SILVESTRE,1,1,                                                  
+5,PI¥A,PI¥A SILVESTRE,1,1,                                                      
+6,LIMON,LIMON SILVESTRE,1,1,                                                    
+7,LULO,LULO SILVESTRE,1,1,                                                      
+8,CEBOLLA LARGA,CEBOLLA SILVESTRE,2,1,                                          
+9,PAPA,PAPA SILVESTRE,2,1,                                                      
+
+9 rows selected.
+
+SQL> spool off
