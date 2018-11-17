@@ -143,7 +143,6 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
         this.editClient = false;
       } else {
         this.client = new Client();
-        this.editClient = true;
       }
     }, error => {
       localStorage.setItem('lasterror', JSON.stringify(error));
@@ -171,7 +170,6 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
         this.editEmployee = false;
       } else {
         this.employee = new Employee();
-        this.editEmployee = true;
       }
     }, error => {
       localStorage.setItem('lasterror', JSON.stringify(error));
@@ -185,9 +183,9 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
     .pipe(takeWhile(() => this.alive))
     .subscribe(res => {
       this.loading = false;
-      if (!res.code) {
-        if (!!res.id) {
-          this.third_party.id = res.id;
+      if (res.code === 0) {
+        if (!!res.id_tercero) {
+          this.third_party.id = res.id_tercero;
         }
         this.editThird = false;
         this.openSnackBar('Tercero guardado', 'x');
@@ -207,9 +205,9 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
     )
     .subscribe(res => {
       this.loading = false;
-      if (!res.code) {
-        if (!!res.id) {
-          this.client.id = res.id;
+      if (res.code === 0) {
+        if (!!res.id_cliente) {
+          this.client.id = res.id_cliente;
         }
         this.editClient = false;
         this.openSnackBar('Cliente guardado', 'x');
@@ -239,6 +237,13 @@ export class ThirdPartyComponent implements OnInit, OnDestroy {
       localStorage.setItem('lastError', JSON.stringify(error));
       this.openSnackBar('Ha ocurrido un error inesperado, vuelva a intentar en unos momentos', 'x');
     });
+  }
+
+  public search_all(type: number) {
+    this.clean_search();
+    this.subscription = this.thirdPartyService
+                            .get_third(undefined, type)
+                            .subscribe(result => this.third_partys = result);
   }
 
 }

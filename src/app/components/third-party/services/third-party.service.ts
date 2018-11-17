@@ -125,10 +125,15 @@ export class ThirdPartyService {
       );
   }
 
-  public get_third(id: number, type= 0) {
+  public get_third(id?: number, type= 0) {
     if ( type === 0 ) {
-      const apiUrl = `${WS_URL}${METHOD}?id=${id}`;
-      return this.http.get(apiUrl);
+      if ( id ) {
+        const apiUrl = `${WS_URL}${METHOD}?third_id=${id}`;
+        return this.http.get<ThirdParty>(apiUrl, this.httpOptions);
+      } else {
+        const apiUrl = `${WS_URL}${METHOD}`;
+        return this.do_search(apiUrl);
+      }
     } else if ( type === 1 ) {
       const apiUrl = `${WS_URL}${METHOD}-client?third_id=${id}`;
       return this.http.get(apiUrl);
